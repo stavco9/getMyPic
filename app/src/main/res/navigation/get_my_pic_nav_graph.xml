@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/get_my_pic_nav_graph"
+    app:startDestination="@id/listFeeds">
+    <fragment
+        android:id="@+id/listFeeds"
+        android:name="com.example.getmypic.ListFeeds"
+        android:label="fragment_list_feeds"
+        tools:layout="@layout/fragment_list_feeds" >
+        <action
+            android:id="@+id/action_listFeeds_to_myFeeds"
+            app:destination="@id/myFeeds" />
+        <action
+            android:id="@+id/action_listFeeds_to_viewFeed"
+            app:destination="@id/viewFeed" />
+    </fragment>
+    <fragment
+        android:id="@+id/myFeeds"
+        android:name="com.example.getmypic.MyFeeds"
+        android:label="fragment_my_feeds"
+        tools:layout="@layout/fragment_my_feeds" >
+        <action
+            android:id="@+id/action_myFeeds_to_createFeed"
+            app:destination="@id/createFeed" />
+        <action
+            android:id="@+id/action_myFeeds_to_updateFeed"
+            app:destination="@id/updateFeed" />
+    </fragment>
+    <fragment
+        android:id="@+id/viewFeed"
+        android:name="com.example.getmypic.ViewFeed"
+        android:label="fragment_view_feed"
+        tools:layout="@layout/fragment_view_feed" />
+    <fragment
+        android:id="@+id/createFeed"
+        android:name="com.example.getmypic.CreateFeed"
+        android:label="fragment_create_feed"
+        tools:layout="@layout/fragment_create_feed" />
+    <fragment
+        android:id="@+id/updateFeed"
+        android:name="com.example.getmypic.UpdateFeed"
+        android:label="fragment_update_feed"
+        tools:layout="@layout/fragment_update_feed" />
+</navigation>
