@@ -3,30 +3,36 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/get_my_pic_nav_graph"
-    app:startDestination="@id/listFeeds">
+    app:startDestination="@+id/listFeeds">
     <fragment
         android:id="@+id/listFeeds"
         android:name="com.example.getmypic.ListFeeds"
         android:label="fragment_list_feeds"
-        tools:layout="@layout/fragment_list_feeds" >
+        tools:layout="@layout/fragment_list_feeds">
         <action
             android:id="@+id/action_listFeeds_to_myFeeds"
             app:destination="@id/myFeeds" />
         <action
             android:id="@+id/action_listFeeds_to_viewFeed"
             app:destination="@id/viewFeed" />
+        <action
+            android:id="@+id/action_listFeeds_to_login"
+            app:destination="@id/login" />
     </fragment>
     <fragment
         android:id="@+id/myFeeds"
         android:name="com.example.getmypic.MyFeeds"
         android:label="fragment_my_feeds"
-        tools:layout="@layout/fragment_my_feeds" >
+        tools:layout="@layout/fragment_my_feeds">
         <action
             android:id="@+id/action_myFeeds_to_createFeed"
             app:destination="@id/createFeed" />
         <action
             android:id="@+id/action_myFeeds_to_updateFeed"
             app:destination="@id/updateFeed" />
+        <action
+            android:id="@+id/action_myFeeds_to_viewFeed"
+            app:destination="@id/viewFeed" />
     </fragment>
     <fragment
         android:id="@+id/viewFeed"
@@ -43,4 +49,9 @@
         android:name="com.example.getmypic.UpdateFeed"
         android:label="fragment_update_feed"
         tools:layout="@layout/fragment_update_feed" />
+    <fragment
+        android:id="@+id/login"
+        android:name="com.example.getmypic.Login"
+        android:label="fragment_login"
+        tools:layout="@layout/fragment_login" />
 </navigation>

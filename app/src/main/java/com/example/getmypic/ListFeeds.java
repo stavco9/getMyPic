@@ -66,7 +66,11 @@ public class ListFeeds extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_list_feeds, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_list_feeds, container, false);
+
+        getActivity().setTitle("List all feeds");
+
+        return rootView;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -82,8 +86,8 @@ public class ListFeeds extends Fragment {
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+            //throw new RuntimeException(context.toString()
+            //        + " must implement OnFragmentInteractionListener");
         }
     }
 
