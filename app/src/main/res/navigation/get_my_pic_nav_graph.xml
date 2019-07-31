@@ -15,9 +15,6 @@
         <action
             android:id="@+id/action_listFeeds_to_viewFeed"
             app:destination="@id/viewFeed" />
-        <action
-            android:id="@+id/action_listFeeds_to_login"
-            app:destination="@id/login" />
     </fragment>
     <fragment
         android:id="@+id/myFeeds"
@@ -53,5 +50,18 @@
         android:id="@+id/login"
         android:name="com.example.getmypic.Login"
         android:label="fragment_login"
-        tools:layout="@layout/fragment_login" />
+        tools:layout="@layout/fragment_login" >
+        <action
+            android:id="@+id/action_login_to_listFeeds"
+            app:destination="@id/listFeeds" />
+    </fragment>
+    <fragment
+        android:id="@+id/logout2"
+        android:name="com.example.getmypic.Logout"
+        android:label="fragment_logout"
+        tools:layout="@layout/fragment_logout" >
+        <action
+            android:id="@+id/action_logout2_to_listFeeds"
+            app:destination="@id/listFeeds" />
+    </fragment>
 </navigation>

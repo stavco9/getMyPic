@@ -15,10 +15,12 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.example.getmypic.Models.Users;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
@@ -40,6 +42,18 @@ public class MainActivity extends AppCompatActivity {
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+
+        if (Users.isAuthenticated()){
+            navigationView.getMenu().findItem(R.id.login).setVisible(false);
+            navigationView.getMenu().findItem(R.id.myFeeds).setVisible(true);
+            navigationView.getMenu().findItem(R.id.logout2).setVisible(true);
+        }
+        else{
+            navigationView.getMenu().findItem(R.id.myFeeds).setVisible(false);
+            navigationView.getMenu().findItem(R.id.login).setVisible(true);
+            navigationView.getMenu().findItem(R.id.logout2).setVisible(false);
+        }
+
         NavController navController = Navigation.findNavController(this, R.id.get_my_pic_nav_graph);
 
         NavigationUI.setupWithNavController(navigationView,navController);

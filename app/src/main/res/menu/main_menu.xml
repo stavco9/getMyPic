@@ -3,9 +3,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
     <item
+        android:id="@id/myFeeds"
+        android:title="View my feeds"
+        android:visible="false"/>
+    <item
         android:id="@id/listFeeds"
-        android:title="List All Feeds" />
+        android:title="List all feeds" />
+    <item
+        android:id="@id/logout2"
+        android:title="Sign out"
+        android:visible="false"/>
     <item
         android:id="@id/login"
-        android:title="Sign In" />
+        android:title="Sign in"
+        android:visible="true"/>
 </menu>

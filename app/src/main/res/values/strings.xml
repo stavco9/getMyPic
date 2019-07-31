@@ -2,6 +2,9 @@
     <string name="app_name">Get My Pic</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="google_client_id">713507729265-3v5mc0uhfc2llnr6gk6jsouhjeajiv64.apps.googleusercontent.com</string>
+    <string name="facebook_app_id">361490654485402</string>
+    <string name="fb_login_protocol_scheme">fb361490654485402</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

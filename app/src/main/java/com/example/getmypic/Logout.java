@@ -5,21 +5,31 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.example.getmypic.Models.Users;
+import com.facebook.login.LoginManager;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link MyFeeds.OnFragmentInteractionListener} interface
+ * {@link Logout.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link MyFeeds#newInstance} factory method to
+ * Use the {@link Logout#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MyFeeds extends Fragment {
+public class Logout extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -31,7 +41,7 @@ public class MyFeeds extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    public MyFeeds() {
+    public Logout() {
         // Required empty public constructor
     }
 
@@ -41,11 +51,11 @@ public class MyFeeds extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment MyFeeds.
+     * @return A new instance of fragment Logout.
      */
     // TODO: Rename and change types and number of parameters
-    public static MyFeeds newInstance(String param1, String param2) {
-        MyFeeds fragment = new MyFeeds();
+    public static Logout newInstance(String param1, String param2) {
+        Logout fragment = new Logout();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -65,8 +75,34 @@ public class MyFeeds extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        View logoutView = inflater.inflate(R.layout.fragment_logout, container, false);
+
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_my_feeds, container, false);
+        if (Users.isAuthenticated()){
+            FirebaseAuth.getInstance().signOut();
+
+            LoginManager.getInstance().logOut();
+
+            NavigationView navigationView = (NavigationView) getActivity().findViewById(R.id.nav_view);
+
+            ImageView userImage = (ImageView)getActivity().findViewById(R.id.user_profile_pic);
+
+            userImage.setImageBitmap(null);
+
+            TextView userText = (TextView)getActivity().findViewById(R.id.display_name);
+
+            userText.setText("");
+
+            navigationView.getMenu().findItem(R.id.myFeeds).setVisible(false);
+            navigationView.getMenu().findItem(R.id.login).setVisible(true);
+            navigationView.getMenu().findItem(R.id.logout2).setVisible(false);
+        }
+
+        NavController navController = Navigation.findNavController(getActivity(), R.id.get_my_pic_nav_graph);
+        navController.navigate(R.id.action_logout2_to_listFeeds);
+
+        return logoutView;
     }
 
     // TODO: Rename method, update argument and hook method into UI event

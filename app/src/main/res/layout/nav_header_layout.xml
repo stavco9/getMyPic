@@ -29,4 +29,15 @@
         android:layout_height="wrap_content"
         android:text="Get My Pic application"></TextView>
 
+    <ImageView
+        android:id="@+id/user_profile_pic"
+        android:layout_width="96dp"
+        android:layout_height="96dp" />
+
+    <TextView
+        android:id="@+id/display_name"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text=""></TextView>
+
 </LinearLayout>
