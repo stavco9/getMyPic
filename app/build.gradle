@@ -5,6 +5,9 @@ apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion 28
+    dataBinding{
+        enabled = true
+    }
     defaultConfig {
         applicationId "com.example.getmypic"
         minSdkVersion 19

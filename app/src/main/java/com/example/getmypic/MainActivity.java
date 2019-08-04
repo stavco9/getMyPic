@@ -19,11 +19,16 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.example.getmypic.Models.DownloadImage;
 import com.example.getmypic.Models.Users;
+import com.facebook.login.widget.LoginButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -44,11 +49,28 @@ public class MainActivity extends AppCompatActivity {
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
 
         if (Users.isAuthenticated()){
-            navigationView.getMenu().findItem(R.id.login).setVisible(false);
+
+            ImageView userImage = (ImageView) navigationView.getHeaderView(0).findViewById(R.id.user_profile_pic);
+
+            new DownloadImage(userImage).execute(Users.getUser().getPhotoUrl().toString());
+
+            TextView userText = (TextView) navigationView.getHeaderView(0).findViewById(R.id.display_name);
+
+            userText.setText("Hello " + Users.getUser().getDisplayName());
+
             navigationView.getMenu().findItem(R.id.myFeeds).setVisible(true);
+            navigationView.getMenu().findItem(R.id.login).setVisible(false);
             navigationView.getMenu().findItem(R.id.logout2).setVisible(true);
         }
         else{
+            ImageView userImage = (ImageView) navigationView.getHeaderView(0).findViewById(R.id.user_profile_pic);
+
+            userImage.setImageBitmap(null);
+
+            TextView userText = (TextView) navigationView.getHeaderView(0).findViewById(R.id.display_name);
+
+            userText.setText("");
+
             navigationView.getMenu().findItem(R.id.myFeeds).setVisible(false);
             navigationView.getMenu().findItem(R.id.login).setVisible(true);
             navigationView.getMenu().findItem(R.id.logout2).setVisible(false);
@@ -64,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
                 getSupportActionBar().setTitle(destination.getLabel());
             }
         });
+
     }
 
 /*    @Override

@@ -125,6 +125,10 @@ public class Login extends Fragment {
                             Log.d(TAG, "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
 
+                            Firebase firebaseInstance = new Firebase();
+
+                            firebaseInstance.addCurrUser();
+
                             UpdateUI(user);
 
                         } else {
@@ -175,6 +179,9 @@ public class Login extends Fragment {
         mFacebookCallbackManager = CallbackManager.Factory.create();
 
         LoginButton facebookLoginButton = loginView.findViewById(R.id.buttonFacebookLogin);
+
+        facebookLoginButton.setReadPermissions("email");
+
         facebookLoginButton.setFragment(this);
 
         facebookLoginButton.registerCallback(mFacebookCallbackManager, new FacebookCallback<LoginResult>() {
