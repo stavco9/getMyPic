@@ -1,18 +1,35 @@
 package com.example.getmypic.Models;
 
-import java.text.DateFormat;
+import androidx.annotation.NonNull;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
+import com.google.firestore.v1.DocumentTransform;
+
+import java.text.DateFormat;
+import java.util.Date;
+import java.util.Map;
+
+@Entity
 public class Posts {
+    @PrimaryKey
+    @NonNull
+    private String id;
     private String text;
     private String postImageUrl;
-    private Users ownerUser;
-    private DateFormat uploadedDate;
+    private String userEmail;
+    private Long uploadedDate;
 
-    public Posts(String text, String postImageUrl, Users ownerUser, DateFormat uploadedDate) {
+    public Posts(String id, String text, String postImageUrl, String userEmail, Long uploadedDate) {
+        this.id = id;
         this.text = text;
         this.postImageUrl = postImageUrl;
-        this.ownerUser = ownerUser;
+        this.userEmail = userEmail;
         this.uploadedDate = uploadedDate;
+    }
+
+    public String getId(){
+        return this.id;
     }
 
     public String getText(){
@@ -23,11 +40,11 @@ public class Posts {
         return this.postImageUrl;
     }
 
-    public Users getOwnerUser(){
-        return this.ownerUser;
+    public String getUserEmail(){
+        return this.userEmail;
     }
 
-    public DateFormat getUploadedDate(){
+    public Long getUploadedDate(){
         return this.uploadedDate;
     }
 }

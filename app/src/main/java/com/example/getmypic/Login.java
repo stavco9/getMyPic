@@ -17,6 +17,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -75,6 +77,8 @@ public class Login extends Fragment {
     private String mParam2;
     private View.OnClickListener googleSignIn;
     private GoogleSignInClient mGoogleSignInClient;
+
+    private ProgressBar loginSpinner;
 
     private CallbackManager mFacebookCallbackManager;
 
@@ -180,13 +184,16 @@ public class Login extends Fragment {
 
         LoginButton facebookLoginButton = loginView.findViewById(R.id.buttonFacebookLogin);
 
-        facebookLoginButton.setReadPermissions("email");
+        facebookLoginButton.setReadPermissions("email", "public_profile");
 
         facebookLoginButton.setFragment(this);
 
         facebookLoginButton.registerCallback(mFacebookCallbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
+
+                loginSpinner.setVisibility(View.VISIBLE);
+
                 Log.d(TAG, "facebook:onSuccess:" + loginResult);
 
                 handleFacebookAccessToken(loginResult.getAccessToken());
@@ -195,6 +202,8 @@ public class Login extends Fragment {
             @Override
             public void onCancel() {
                 Log.d(TAG, "facebook:onCancel");
+
+                loginSpinner.setVisibility(View.GONE);
             }
 
             @Override
@@ -249,6 +258,10 @@ public class Login extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View loginView = inflater.inflate(R.layout.fragment_login, container, false);
+
+        loginSpinner = (ProgressBar) loginView.findViewById(R.id.login_spinner);
+
+        loginSpinner.setVisibility(View.GONE);
 
         initalizeGoogleSignIn(loginView);
 

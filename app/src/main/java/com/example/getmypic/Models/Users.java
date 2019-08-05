@@ -3,15 +3,18 @@ package com.example.getmypic.Models;
 import android.net.Uri;
 import android.provider.ContactsContract;
 
+import androidx.annotation.Keep;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+@Keep
 public class Users{
-    private String displayName;
-    private String emailAddress;
-    private String googleId;
-    private String facebookId;
-    private String imagePath;
+    public String displayName;
+    public String emailAddress;
+    public String googleId;
+    public String facebookId;
+    public String imagePath;
 
     public  Users(String emailAddress, String displayName, String facebookId, String imagePath){
         this.emailAddress = emailAddress;
