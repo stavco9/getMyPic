@@ -11,4 +11,13 @@
         android:layout_height="match_parent"
         android:text="@string/hello_blank_fragment" />
 
+    <Button
+        android:id="@+id/create_feed_btn"
+        android:text="+"
+        android:textColor="#FFFFFF"
+        android:textSize="30sp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        />
+
 </FrameLayout>
