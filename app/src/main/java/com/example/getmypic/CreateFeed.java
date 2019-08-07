@@ -5,12 +5,26 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import com.example.getmypic.Models.Firebase;
+import com.example.getmypic.Models.MainModel;
+import com.example.getmypic.Models.Posts;
+import com.example.getmypic.Models.Users;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 /**
@@ -33,10 +47,43 @@ public class CreateFeed extends Fragment {
 
     private EditText createFeedTxt;
 
+    private Button createFeedSubmitBtn;
+
+    private int count;
+
     private OnFragmentInteractionListener mListener;
 
     public CreateFeed() {
         // Required empty public constructor
+    }
+
+    private void submitFeed(){
+        createFeedSubmitBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Firebase fb = new Firebase();
+
+                DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                Date date = new Date();
+
+                View createFeedView = v.getRootView();
+
+                createFeedTxt = (EditText) createFeedView.findViewById(R.id.create_feed_txt);
+
+                Posts post = new Posts(Integer.toString(count + 1), createFeedTxt.getText().toString(), "", Users.getUser().getEmail(), dateFormat.format(date));
+
+                fb.addPost(post, new MainModel.AddPostListener() {
+                    @Override
+                    public void onComplete(boolean success) {
+                        if (success){
+                            NavController navController = Navigation.findNavController(getActivity(), R.id.get_my_pic_nav_graph);
+                            navController.navigate(R.id.action_createFeed_to_listFeeds);
+                        }
+                    }
+                });
+            }
+        });
     }
 
     /**
@@ -72,7 +119,18 @@ public class CreateFeed extends Fragment {
         // Inflate the layout for this fragment
         View createFeedView = inflater.inflate(R.layout.fragment_create_feed, container, false);
 
-        createFeedTxt = (EditText) createFeedView.findViewById(R.id.create_feed_txt);
+        Firebase fb = new Firebase();
+
+        fb.getAllPosts(new MainModel.GetAllPostsListener() {
+            @Override
+            public void onComplete(List<Posts> data) {
+                count  = data.size();
+
+                submitFeed();
+            }
+        });
+
+        createFeedSubmitBtn = (Button) createFeedView.findViewById(R.id.create_feed_submit_btn);
 
         return  createFeedView;
     }

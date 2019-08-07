@@ -8,6 +8,7 @@ import com.google.firestore.v1.DocumentTransform;
 
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 @Entity
@@ -18,14 +19,42 @@ public class Posts {
     private String text;
     private String postImageUrl;
     private String userEmail;
-    private Long uploadedDate;
+    private String uploadedDate;
 
-    public Posts(String id, String text, String postImageUrl, String userEmail, Long uploadedDate) {
+    public Posts(String id, String text, String postImageUrl, String userEmail, String uploadedDate) {
         this.id = id;
         this.text = text;
         this.postImageUrl = postImageUrl;
         this.userEmail = userEmail;
         this.uploadedDate = uploadedDate;
+    }
+
+    public Posts(Map<String, Object> post){
+
+        if (post.containsKey("id") &&
+                post.get("id") != null){
+            this.id = post.get("id").toString();
+        }
+
+        if (post.containsKey("text") &&
+                post.get("text") != null){
+            this.text = post.get("text").toString();
+        }
+
+        if (post.containsKey("postImageUrl") &&
+                post.get("postImageUrl") != null){
+            this.postImageUrl = post.get("postImageUrl").toString();
+        }
+
+        if (post.containsKey("userEmail") &&
+                post.get("userEmail") != null){
+            this.userEmail = post.get("userEmail").toString();
+        }
+
+        if (post.containsKey("uploadedDate") &&
+                post.get("uploadedDate") != null){
+            this.uploadedDate = post.get("uploadedDate").toString();
+        }
     }
 
     public String getId(){
@@ -44,7 +73,7 @@ public class Posts {
         return this.userEmail;
     }
 
-    public Long getUploadedDate(){
+    public String getUploadedDate(){
         return this.uploadedDate;
     }
 }

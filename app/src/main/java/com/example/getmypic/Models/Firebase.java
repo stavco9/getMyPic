@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseError;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -18,6 +19,7 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.Transaction;
 import com.google.firebase.firestore.auth.User;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -26,6 +28,7 @@ import com.google.firebase.storage.UploadTask;
 import java.io.ByteArrayOutputStream;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Firebase {
     FirebaseFirestore db;
@@ -93,8 +96,16 @@ public class Firebase {
                     return;
                 }
                 for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                    Posts post = doc.toObject(Posts.class);
-                    posts.add(post);
+
+                    try{
+                        Posts post = new Posts(doc.getData());
+
+                        posts.add(post);
+                    }
+                    catch (RuntimeException exc){
+                        exc.printStackTrace();
+                    }
+
                 }
                 listener.onComplete(posts);
             }

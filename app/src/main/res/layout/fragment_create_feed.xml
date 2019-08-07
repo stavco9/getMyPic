@@ -15,4 +15,12 @@
         android:maxLength="2000"
         android:maxLines="7" />
 
+    <Button
+        android:id="@+id/create_feed_submit_btn"
+        android:text="Share"
+        android:textColor="#FFFFFF"
+        android:textSize="30sp"
+        android:layout_width="100dp"
+        android:layout_height="100dp" />
+
 </FrameLayout>

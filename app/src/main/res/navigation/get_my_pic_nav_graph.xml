@@ -10,9 +10,6 @@
         android:label="fragment_list_feeds"
         tools:layout="@layout/fragment_list_feeds">
         <action
-            android:id="@+id/action_listFeeds_to_myFeeds"
-            app:destination="@id/myFeeds" />
-        <action
             android:id="@+id/action_listFeeds_to_viewFeed"
             app:destination="@id/viewFeed" />
     </fragment>
@@ -40,7 +37,11 @@
         android:id="@+id/createFeed"
         android:name="com.example.getmypic.CreateFeed"
         android:label="fragment_create_feed"
-        tools:layout="@layout/fragment_create_feed" />
+        tools:layout="@layout/fragment_create_feed" >
+        <action
+            android:id="@+id/action_createFeed_to_listFeeds"
+            app:destination="@id/listFeeds" />
+    </fragment>
     <fragment
         android:id="@+id/updateFeed"
         android:name="com.example.getmypic.UpdateFeed"
