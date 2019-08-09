@@ -82,34 +82,39 @@ public class CreateFeed extends Fragment {
         // Required empty public constructor
     }
 
+    // Add final post to firebase after photo is taken !!!
     private void addFinalPostTofirebase(List<Posts> data){
 
+        // set is counted to true. Now, this method will not be called anymore
         isCounted = true;
 
+        // Get the count of posts from Firebase
         count  = data.size();
 
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         Date date = new Date();
 
+        // Create new post object
         Posts post = new Posts(Integer.toString(count + 1), createFeedTxt.getText().toString(), firebaseImageUrl, Users.getUser().getEmail(), dateFormat.format(date));
 
+        // Add post to Firebase
         fb.addPost(post, new MainModel.AddPostListener() {
 
             @Override
             public void onComplete(boolean success) {
 
+                // Added result text
                 uploadedLayout.setVisibility(View.VISIBLE);
                 uploadedText.setVisibility(View.VISIBLE);
                 waitingBar.setVisibility(View.GONE);
-
                 navController = Navigation.findNavController(getActivity(), R.id.get_my_pic_nav_graph);
 
+                // If uploaded successfully
                 if (success){
 
+                    // Set the text that it's successful for 2 seconds
                     uploadedText.setText("Successfully added post !!!");
-
                     uploadedText.setTextColor(Color.GREEN);
-
                     Handler handler = new Handler();
                     handler.postDelayed(new Runnable() {
                         @Override
@@ -117,15 +122,15 @@ public class CreateFeed extends Fragment {
                             uploadedLayout.setVisibility(View.GONE);
                             uploadedText.setVisibility(View.GONE);
 
+                            // Navigate back to list feeds
                             navController.navigate(R.id.action_createFeed_to_listFeeds);
                         }
                     }, 2000);
                 }
                 else{
+                    // Set text to error for 2 seconds
                     uploadedText.setText("Error while addding post");
-
                     uploadedText.setTextColor(Color.RED);
-
                     Handler handler = new Handler();
                     handler.postDelayed(new Runnable() {
                         @Override
@@ -133,6 +138,7 @@ public class CreateFeed extends Fragment {
                             uploadedLayout.setVisibility(View.GONE);
                             uploadedText.setVisibility(View.GONE);
 
+                            // Pop back to previous fragment
                             navController.popBackStack();
                         }
                     }, 2000);
@@ -143,31 +149,37 @@ public class CreateFeed extends Fragment {
 
     private void addNewFeed(final List<Posts> data){
 
+        // Adding waiting spinner
         uploadedLayout.setVisibility(View.VISIBLE);
         waitingBar.setVisibility(View.VISIBLE);
 
+        // If a photo was taken
         if (imageBitmap != null){
+
+            // Upload image to Firebase
             fb.saveImage(imageBitmap, new MainModel.SaveImageListener() {
                 @Override
                 public void onComplete(String url) {
                     firebaseImageUrl = url;
 
+                    // Add final post to Firebase
                     addFinalPostTofirebase(data);
                 }
             });
         }
+        // If no photo was taken but there's a text
         else if (createFeedTxt.getText().length() > 0){
+
+            // Add final post to Firabase
             addFinalPostTofirebase(data);
         }
         else{
+            // Set error text for 2 seconds
             uploadedLayout.setVisibility(View.VISIBLE);
             uploadedText.setVisibility(View.VISIBLE);
             waitingBar.setVisibility(View.GONE);
-
             uploadedText.setText("You must write some text or take a photo");
-
             uploadedText.setTextColor(Color.RED);
-
             Handler handler = new Handler();
             handler.postDelayed(new Runnable() {
                 @Override
@@ -181,24 +193,27 @@ public class CreateFeed extends Fragment {
     }
 
     private  void takePhoto(){
+
+        // When clicking pick gallery button
         takePhotoGalleryBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                // Pick photo from gallery
                 photo = new TakePhoto();
-
                 Intent galleryIntent = photo.pickFromGallery();
-
                 startActivityForResult(galleryIntent, GALLERY_REQUEST_CODE);
             }
         });
 
+        // When clicking pick camera button
         takePhotoCameraBtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
+
+                // Take camera photo
                 photo = new TakePhoto();
-
                 Intent cameraIntent = photo.captureFromCamera(getContext());
-
                 startActivityForResult(cameraIntent, CAMERA_REQUEST_CODE);
             }
         });
@@ -206,21 +221,46 @@ public class CreateFeed extends Fragment {
 
     private void submitFeed(){
 
+        // When cliking submit button
         createFeedSubmitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                createFeedView = v.getRootView();
+                // If there's internet connection
+                if (GetMyPicApplication.isInternetAvailable(getContext())){
 
-                fb.getAllPosts(new MainModel.GetAllPostsListener() {
+                    // Get the root view
+                    createFeedView = v.getRootView();
 
-                    @Override
-                    public void onComplete(List<Posts> data) {
-                        if (!isCounted){
-                            addNewFeed(data);
+                    // Get all updated posts from Firebase
+                    fb.getAllPosts(new MainModel.GetAllPostsListener() {
+
+                        @Override
+                        public void onComplete(List<Posts> data) {
+
+                            // If a new feed hasen't added yey
+                            if (!isCounted){
+                                addNewFeed(data);
+                            }
                         }
-                    }
-                });
+                    });
+                }
+                else{
+                    // Set error message of internet connectivity for 2 seconds
+                    uploadedLayout.setVisibility(View.VISIBLE);
+                    uploadedText.setVisibility(View.VISIBLE);
+                    waitingBar.setVisibility(View.GONE);
+                    uploadedText.setText("No internet connection.....");
+                    uploadedText.setTextColor(Color.RED);
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            uploadedLayout.setVisibility(View.GONE);
+                            uploadedText.setVisibility(View.GONE);
+                        }
+                    }, 2000);
+                }
             }
         });
     }
@@ -254,24 +294,20 @@ public class CreateFeed extends Fragment {
         // Inflate the layout for this fragment
         View createFeedView = inflater.inflate(R.layout.fragment_create_feed, container, false);
 
+        // Initalize all views
         createFeedTxt = (EditText) createFeedView.findViewById(R.id.create_feed_txt);
-
         createFeedSubmitBtn = (Button) createFeedView.findViewById(R.id.create_feed_submit_btn);
-
         takePhotoGalleryBtn = (Button) createFeedView.findViewById(R.id.take_photo_gallery);
-
         takePhotoCameraBtn = (Button) createFeedView.findViewById(R.id.take_photo_camera);
-
         isUploadedView = (TextView) createFeedView.findViewById(R.id.is_Uploaded);
-
         waitingBar = (ProgressBar) createFeedView.findViewById(R.id.create_waiting_bar);
-
         uploadedText  = (TextView) createFeedView.findViewById(R.id.create_final);
-
         uploadedLayout = (FrameLayout) createFeedView.findViewById(R.id.create_waiting);
 
+        // Initalize submit Button
         submitFeed();
 
+        // Initalize take photos button
         takePhoto();
 
         return  createFeedView;
@@ -285,43 +321,54 @@ public class CreateFeed extends Fragment {
     }
 
     public void onActivityResult(int requestCode,int resultCode,Intent data){
-        // Result code is RESULT_OK only if the user selects an Image
 
         Uri selectedImage;
 
+        // Result code is RESULT_OK only if the user selects an Image
         if (resultCode == Activity.RESULT_OK) {
             switch (requestCode){
+                // The photo was taken from gallery
                 case GALLERY_REQUEST_CODE:
+
                     //data.getData return the content URI for the selected Image
                     selectedImage = data.getData();
                     String[] filePathColumn = { MediaStore.Images.Media.DATA };
+
                     // Get the cursor
                     Cursor cursor = getActivity().getContentResolver().query(selectedImage, filePathColumn, null, null, null);
+
                     // Move to first row
                     cursor.moveToFirst();
+
                     //Get the column index of MediaStore.Images.Media.DATA
                     int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+
                     //Gets the String value in the column
                     String imgDecodableString = cursor.getString(columnIndex);
                     cursor.close();
 
+                    // Convert string to bitmap
                     imageBitmap = BitmapFactory.decodeFile(imgDecodableString);
 
+                    // Set the uploaded text to visible
                     isUploadedView.setVisibility(View.VISIBLE);
 
                     break;
                 case  CAMERA_REQUEST_CODE:
+
+                    // get the image URI
                     selectedImage = Uri.parse(photo.getFilePath());
 
                     try{
+                        // convert the uri to bitmap
                         imageBitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), selectedImage);
 
+                        // rotate with 270 degrees
                         Matrix matrix = new Matrix();
-
                         matrix.postRotate(270);
-
                         imageBitmap = Bitmap.createBitmap(imageBitmap, 0, 0, imageBitmap.getWidth(), imageBitmap.getHeight(), matrix, true);
 
+                        // set the uploaded text to visible
                         isUploadedView.setVisibility(View.VISIBLE);
                     }
                     catch (IOException e){
