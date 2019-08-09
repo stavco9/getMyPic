@@ -49,6 +49,10 @@ public class CreateFeed extends Fragment {
 
     private Button createFeedSubmitBtn;
 
+    private boolean isCounted = false;
+
+    private View createFeedView;
+
     private int count;
 
     private OnFragmentInteractionListener mListener;
@@ -57,28 +61,52 @@ public class CreateFeed extends Fragment {
         // Required empty public constructor
     }
 
+    private void addNewFeed(List<Posts> data){
+        Firebase fbAdd = new Firebase();
+
+        isCounted = true;
+
+        count  = data.size();
+
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        Date date = new Date();
+
+        createFeedTxt = (EditText) createFeedView.findViewById(R.id.create_feed_txt);
+
+        Posts post = new Posts(Integer.toString(count + 1), createFeedTxt.getText().toString(), "", Users.getUser().getEmail(), dateFormat.format(date));
+
+        fbAdd.addPost(post, new MainModel.AddPostListener() {
+
+            @Override
+            public void onComplete(boolean success) {
+                NavController navController = Navigation.findNavController(getActivity(), R.id.get_my_pic_nav_graph);
+
+                if (success){
+                    navController.navigate(R.id.action_createFeed_to_listFeeds);
+                }
+                else{
+                    navController.popBackStack();
+                }
+            }
+        });
+    }
+
     private void submitFeed(){
+
         createFeedSubmitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                Firebase fb = new Firebase();
+                createFeedView = v.getRootView();
 
-                DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-                Date date = new Date();
+                Firebase fbList = new Firebase();
 
-                View createFeedView = v.getRootView();
+                fbList.getAllPosts(new MainModel.GetAllPostsListener() {
 
-                createFeedTxt = (EditText) createFeedView.findViewById(R.id.create_feed_txt);
-
-                Posts post = new Posts(Integer.toString(count + 1), createFeedTxt.getText().toString(), "", Users.getUser().getEmail(), dateFormat.format(date));
-
-                fb.addPost(post, new MainModel.AddPostListener() {
                     @Override
-                    public void onComplete(boolean success) {
-                        if (success){
-                            NavController navController = Navigation.findNavController(getActivity(), R.id.get_my_pic_nav_graph);
-                            navController.navigate(R.id.action_createFeed_to_listFeeds);
+                    public void onComplete(List<Posts> data) {
+                        if (!isCounted){
+                            addNewFeed(data);
                         }
                     }
                 });
@@ -119,18 +147,9 @@ public class CreateFeed extends Fragment {
         // Inflate the layout for this fragment
         View createFeedView = inflater.inflate(R.layout.fragment_create_feed, container, false);
 
-        Firebase fb = new Firebase();
-
-        fb.getAllPosts(new MainModel.GetAllPostsListener() {
-            @Override
-            public void onComplete(List<Posts> data) {
-                count  = data.size();
-
-                submitFeed();
-            }
-        });
-
         createFeedSubmitBtn = (Button) createFeedView.findViewById(R.id.create_feed_submit_btn);
+
+        submitFeed();
 
         return  createFeedView;
     }

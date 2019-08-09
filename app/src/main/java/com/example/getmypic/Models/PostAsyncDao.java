@@ -34,7 +34,7 @@ interface PostsDao{
 }
 
 public class PostAsyncDao {
-    public static void getAllStudents(final MainModel.GetAllPostsListener listener) {
+    public static void getAllPosts(final MainModel.GetAllPostsListener listener) {
         new AsyncTask<String,String,List<Posts>>(){
 
             @Override
