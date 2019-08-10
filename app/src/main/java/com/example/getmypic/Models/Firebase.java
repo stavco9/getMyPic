@@ -1,6 +1,7 @@
 package com.example.getmypic.Models;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.ColorSpace;
 import android.net.Uri;
 
@@ -31,7 +32,7 @@ import java.util.LinkedList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Firebase {
-    FirebaseFirestore db;
+    private FirebaseFirestore db;
 
     public Firebase(){
         db = FirebaseFirestore.getInstance();
@@ -59,6 +60,16 @@ public class Firebase {
     public void addPost(Posts post, final MainModel.AddPostListener listener) {
         db.collection("posts").document(post.getId())
                 .set(post).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                listener.onComplete(task.isSuccessful());
+            }
+        });
+    }
+
+    public void deletePost(Posts post, final MainModel.DeletePostListener listener) {
+        db.collection("posts").document(post.getId())
+                .delete().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 listener.onComplete(task.isSuccessful());
@@ -108,6 +119,25 @@ public class Firebase {
 
                 }
                 listener.onComplete(posts);
+            }
+        });
+    }
+
+    public void getImage(String url, final MainModel.GetImageListener listener){
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference httpsReference = storage.getReferenceFromUrl(url);
+        final long ONE_MEGABYTE = 1024 * 1024;
+        httpsReference.getBytes(3* ONE_MEGABYTE).addOnCompleteListener(new OnCompleteListener<byte[]>() {
+            @Override
+            public void onComplete(@NonNull Task<byte[]> task) {
+                if (task.isSuccessful()){
+                    byte[] bytes = task.getResult();
+                    Bitmap image = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
+                    listener.onComplete(image);
+                }
+                else{
+                    listener.onComplete(null);
+                }
             }
         });
     }

@@ -7,6 +7,7 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
 import com.example.getmypic.GetMyPicApplication;
+import com.example.getmypic.MainActivity;
 
 @Database(entities = {Posts.class}, version = 20)
 abstract class AppLocalDbRepository extends RoomDatabase {
@@ -14,9 +15,7 @@ abstract class AppLocalDbRepository extends RoomDatabase {
 }
 public class SQLite {
 
-    static  Context context;
-
-    static public AppLocalDbRepository db = Room.databaseBuilder(GetMyPicApplication.getContext(),
+    static  public AppLocalDbRepository db = Room.databaseBuilder(GetMyPicApplication.getContext(),
             AppLocalDbRepository.class,
             "getmypic.db")
             .fallbackToDestructiveMigration()

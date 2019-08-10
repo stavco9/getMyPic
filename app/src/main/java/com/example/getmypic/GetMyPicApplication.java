@@ -16,8 +16,6 @@ import java.net.InetAddress;
 public class GetMyPicApplication extends MultiDexApplication {
     static Context context;
 
-    private static final int REQUEST_EXTERNAL_STORAGE = 240;
-
     @Override
     public void onCreate() {
         super.onCreate();

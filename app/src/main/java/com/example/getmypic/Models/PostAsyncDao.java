@@ -24,13 +24,13 @@ interface PostsDao{
     Posts get(String id);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertAll(Posts... students);
+    void insertAll(Posts... posts);
 
-    @Insert
-    void insert(List<Posts> students);
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insert(List<Posts> posts);
 
     @Delete
-    void delete(Posts student);
+    void delete(Posts... post);
 }
 
 public class PostAsyncDao {
@@ -51,5 +51,54 @@ public class PostAsyncDao {
             }
         }.execute();
 
+    }
+
+    public static void addPost(Posts posts, final MainModel.AddPostListener listener){
+        new AsyncTask<Posts, String, Boolean>(){
+
+            @Override
+            protected Boolean doInBackground(Posts... posts) {
+                try{
+                    SQLite.db.postsDao().insertAll(posts);
+
+                    return true;
+                }
+                catch (Exception e){
+                    return false;
+                }
+            }
+
+            @Override
+            protected void onPostExecute(Boolean success) {
+                super.onPostExecute(success);
+                listener.onComplete(success);
+
+            }
+
+        }.execute(posts);
+    }
+
+    public static void deletePost(Posts posts, final MainModel.DeletePostListener listener){
+        new AsyncTask<Posts, String, Boolean>(){
+
+            @Override
+            protected Boolean doInBackground(Posts... posts) {
+                try{
+                    SQLite.db.postsDao().delete(posts);
+
+                    return true;
+                }
+                catch (Exception e){
+                    return false;
+                }
+            }
+
+            @Override
+            protected void onPostExecute(Boolean success) {
+                super.onPostExecute(success);
+                listener.onComplete(success);
+
+            }
+        }.execute(posts);
     }
 }

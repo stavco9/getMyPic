@@ -17,6 +17,7 @@ import androidx.navigation.Navigation;
 
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,7 +30,9 @@ import android.widget.TextView;
 
 import com.example.getmypic.Models.Firebase;
 import com.example.getmypic.Models.MainModel;
+import com.example.getmypic.Models.PostAsyncDao;
 import com.example.getmypic.Models.Posts;
+import com.example.getmypic.Models.SQLite;
 import com.example.getmypic.Models.TakePhoto;
 import com.example.getmypic.Models.Users;
 
@@ -95,7 +98,7 @@ public class CreateFeed extends Fragment {
         Date date = new Date();
 
         // Create new post object
-        Posts post = new Posts(Integer.toString(count + 1), createFeedTxt.getText().toString(), firebaseImageUrl, Users.getUser().getEmail(), dateFormat.format(date));
+        final Posts post = new Posts(Integer.toString(count + 1), createFeedTxt.getText().toString(), firebaseImageUrl, Users.getUser().getEmail(), dateFormat.format(date));
 
         // Add post to Firebase
         fb.addPost(post, new MainModel.AddPostListener() {
@@ -103,29 +106,40 @@ public class CreateFeed extends Fragment {
             @Override
             public void onComplete(boolean success) {
 
-                // Added result text
-                uploadedLayout.setVisibility(View.VISIBLE);
-                uploadedText.setVisibility(View.VISIBLE);
-                waitingBar.setVisibility(View.GONE);
-                navController = Navigation.findNavController(getActivity(), R.id.get_my_pic_nav_graph);
-
-                // If uploaded successfully
+                // If the post uploaded successfully to Firebase
                 if (success){
-
-                    // Set the text that it's successful for 2 seconds
-                    uploadedText.setText("Successfully added post !!!");
-                    uploadedText.setTextColor(Color.GREEN);
-                    Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
+                    // Add post to local DB SQLite cache
+                    PostAsyncDao.addPost(post, new MainModel.AddPostListener() {
                         @Override
-                        public void run() {
-                            uploadedLayout.setVisibility(View.GONE);
-                            uploadedText.setVisibility(View.GONE);
+                        public void onComplete(boolean success) {
+                            Log.d("SQLite", "Added successfully post to local cache");
 
-                            // Navigate back to list feeds
-                            navController.navigate(R.id.action_createFeed_to_listFeeds);
+                            // Added result text
+                            uploadedLayout.setVisibility(View.VISIBLE);
+                            uploadedText.setVisibility(View.VISIBLE);
+                            waitingBar.setVisibility(View.GONE);
+                            navController = Navigation.findNavController(getActivity(), R.id.get_my_pic_nav_graph);
+
+                            // If saved in SQLite successfully
+                            if (success){
+
+                                // Set the text that it's successful for 2 seconds
+                                uploadedText.setText("Successfully added post !!!");
+                                uploadedText.setTextColor(Color.GREEN);
+                                Handler handler = new Handler();
+                                handler.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        uploadedLayout.setVisibility(View.GONE);
+                                        uploadedText.setVisibility(View.GONE);
+
+                                        // Navigate back to list feeds
+                                        navController.navigate(R.id.action_createFeed_to_listFeeds);
+                                    }
+                                }, 2000);
+                            }
                         }
-                    }, 2000);
+                    });
                 }
                 else{
                     // Set text to error for 2 seconds
@@ -145,6 +159,7 @@ public class CreateFeed extends Fragment {
                 }
             }
         });
+
     }
 
     private void addNewFeed(final List<Posts> data){
@@ -164,6 +179,11 @@ public class CreateFeed extends Fragment {
 
                     // Add final post to Firebase
                     addFinalPostTofirebase(data);
+
+                    // Save the photo in local cache
+                    TakePhoto photo = new TakePhoto();
+                    String localFileName = photo.getLocalImageFileName(firebaseImageUrl);
+                    photo.saveImageToFile(imageBitmap, localFileName);
                 }
             });
         }
@@ -213,7 +233,7 @@ public class CreateFeed extends Fragment {
 
                 // Take camera photo
                 photo = new TakePhoto();
-                Intent cameraIntent = photo.captureFromCamera(getContext());
+                Intent cameraIntent = photo.captureFromCamera();
                 startActivityForResult(cameraIntent, CAMERA_REQUEST_CODE);
             }
         });
