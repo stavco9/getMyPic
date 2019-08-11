@@ -41,6 +41,11 @@
         <action
             android:id="@+id/action_createFeed_to_listFeeds"
             app:destination="@id/listFeeds" />
+        <argument
+            android:name="post"
+            app:argType="com.example.getmypic.Models.Posts"
+            app:nullable="true"
+            android:defaultValue="@null" />
     </fragment>
     <fragment
         android:id="@+id/updateFeed"

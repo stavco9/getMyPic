@@ -40,6 +40,7 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -77,6 +78,7 @@ public class CreateFeed extends Fragment {
     private final int CAMERA_REQUEST_CODE = 1888;
     private final int GALLERY_REQUEST_CODE = 1889;
     private Firebase fb = new Firebase();
+    private Posts postToEdit;
     private int count;
 
     private OnFragmentInteractionListener mListener;
@@ -91,14 +93,19 @@ public class CreateFeed extends Fragment {
         // set is counted to true. Now, this method will not be called anymore
         isCounted = true;
 
-        // Get the count of posts from Firebase
-        count  = data.size();
+        if (postToEdit != null){
+            count = Integer.parseInt(postToEdit.getId());
+        }
+        else {
+            // Get the count of posts from Firebase
+            count  = data.size() + 1;
+        }
 
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         Date date = new Date();
 
         // Create new post object
-        final Posts post = new Posts(Integer.toString(count + 1), createFeedTxt.getText().toString(), firebaseImageUrl, Users.getUser().getEmail(), dateFormat.format(date));
+        final Posts post = new Posts(Integer.toString(count), createFeedTxt.getText().toString(), firebaseImageUrl, Users.getUser().getEmail(), dateFormat.format(date));
 
         // Add post to Firebase
         fb.addPost(post, new MainModel.AddPostListener() {
@@ -247,23 +254,32 @@ public class CreateFeed extends Fragment {
             public void onClick(View v) {
 
                 // If there's internet connection
-                if (GetMyPicApplication.isInternetAvailable(getContext())){
+                if (GetMyPicApplication.isInternetAvailable()){
 
                     // Get the root view
                     createFeedView = v.getRootView();
 
-                    // Get all updated posts from Firebase
-                    fb.getAllPosts(new MainModel.GetAllPostsListener() {
+                    if (postToEdit == null){
+                        // Get all updated posts from Firebase
+                        fb.getAllPosts(new MainModel.GetAllPostsListener() {
 
-                        @Override
-                        public void onComplete(List<Posts> data) {
+                            @Override
+                            public void onComplete(List<Posts> data) {
 
-                            // If a new feed hasen't added yey
-                            if (!isCounted){
-                                addNewFeed(data);
+                                // If a new feed hasen't added yey
+                                if (!isCounted){
+                                    addNewFeed(data);
+                                }
                             }
-                        }
-                    });
+                        });
+                    }
+                    else{
+                        List<Posts> data = new LinkedList<Posts>();
+
+                        data.add(postToEdit);
+
+                        addNewFeed(data);
+                    }
                 }
                 else{
                     // Set error message of internet connectivity for 2 seconds
@@ -323,6 +339,13 @@ public class CreateFeed extends Fragment {
         waitingBar = (ProgressBar) createFeedView.findViewById(R.id.create_waiting_bar);
         uploadedText  = (TextView) createFeedView.findViewById(R.id.create_final);
         uploadedLayout = (FrameLayout) createFeedView.findViewById(R.id.create_waiting);
+
+        postToEdit = CreateFeedArgs.fromBundle(getArguments()).getPost();
+
+        if (postToEdit != null){
+            createFeedTxt.setText(postToEdit.getText());
+            firebaseImageUrl = postToEdit.getPostImageUrl();
+        }
 
         // Initalize submit Button
         submitFeed();

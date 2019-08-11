@@ -1,18 +1,22 @@
 package com.example.getmypic.Models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 import com.google.firestore.v1.DocumentTransform;
 
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 @Entity
-public class Posts {
+public class Posts implements Serializable {
     @PrimaryKey
     @NonNull
     private String id;
@@ -76,4 +80,5 @@ public class Posts {
     public String getUploadedDate(){
         return this.uploadedDate;
     }
+
 }

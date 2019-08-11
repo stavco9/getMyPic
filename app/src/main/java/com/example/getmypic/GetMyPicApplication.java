@@ -28,8 +28,8 @@ public class GetMyPicApplication extends MultiDexApplication {
         MultiDex.install(this);
     }
 
-    public static boolean isInternetAvailable(Context appContext) {
-        ConnectivityManager connectivityManager = ((ConnectivityManager) appContext.getSystemService(Context.CONNECTIVITY_SERVICE));
+    public static boolean isInternetAvailable() {
+        ConnectivityManager connectivityManager = ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
         return connectivityManager.getActiveNetworkInfo() != null && connectivityManager.getActiveNetworkInfo().isConnected();
     }
 
