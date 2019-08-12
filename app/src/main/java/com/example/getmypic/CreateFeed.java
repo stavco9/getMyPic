@@ -78,7 +78,7 @@ public class CreateFeed extends Fragment {
                     public void onComplete(boolean success) {
                         if (success){
                             NavController navController = Navigation.findNavController(getActivity(), R.id.get_my_pic_nav_graph);
-                            navController.navigate(R.id.action_createFeed_to_listFeeds);
+                            //navController.navigate(R.id.action_createFeed_to_listFeeds);
                         }
                     }
                 });

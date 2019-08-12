@@ -1,14 +1,11 @@
 package com.example.getmypic.Models;
 
+import android.net.Uri;
+
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-import com.google.firestore.v1.DocumentTransform;
-
-import java.text.DateFormat;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
 @Entity
@@ -29,51 +26,51 @@ public class Posts {
         this.uploadedDate = uploadedDate;
     }
 
-    public Posts(Map<String, Object> post){
+    public Posts(Map<String, Object> post) {
 
         if (post.containsKey("id") &&
-                post.get("id") != null){
+                post.get("id") != null) {
             this.id = post.get("id").toString();
         }
 
         if (post.containsKey("text") &&
-                post.get("text") != null){
+                post.get("text") != null) {
             this.text = post.get("text").toString();
         }
 
         if (post.containsKey("postImageUrl") &&
-                post.get("postImageUrl") != null){
+                post.get("postImageUrl") != null) {
             this.postImageUrl = post.get("postImageUrl").toString();
         }
 
         if (post.containsKey("userEmail") &&
-                post.get("userEmail") != null){
+                post.get("userEmail") != null) {
             this.userEmail = post.get("userEmail").toString();
         }
 
         if (post.containsKey("uploadedDate") &&
-                post.get("uploadedDate") != null){
+                post.get("uploadedDate") != null) {
             this.uploadedDate = post.get("uploadedDate").toString();
         }
     }
 
-    public String getId(){
+    public String getId() {
         return this.id;
     }
 
-    public String getText(){
+    public String getText() {
         return this.text;
     }
 
-    public String getPostImageUrl(){
+    public String getPostImageUrl() {
         return this.postImageUrl;
     }
 
-    public String getUserEmail(){
+    public String getUserEmail() {
         return this.userEmail;
     }
 
-    public String getUploadedDate(){
+    public String getUploadedDate() {
         return this.uploadedDate;
     }
 }

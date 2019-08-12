@@ -9,28 +9,30 @@ public class MainModel {
 
     SQLite modelSql;
     Firebase modelFirebase;
+
     private void Model() {
         modelSql = new SQLite();
         modelFirebase = new Firebase();
-//        }
     }
 
-    public interface GetAllPostsListener{
+    public interface GetAllPostsListener {
         void onComplete(List<Posts> data);
     }
 
-    public interface AddPostListener{
+    public interface AddPostListener {
         void onComplete(boolean success);
     }
+
     public void addPost(Posts post, AddPostListener listener) {
         //TODO: fix async impl
         modelFirebase.addPost(post, listener);
     }
 
 
-    public interface SaveImageListener{
+    public interface SaveImageListener {
         void onComplete(String url);
     }
+
     public void saveImage(Bitmap imageBitmap, SaveImageListener listener) {
         modelFirebase.saveImage(imageBitmap, listener);
     }

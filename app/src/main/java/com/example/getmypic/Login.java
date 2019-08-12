@@ -1,26 +1,20 @@
 package com.example.getmypic;
 
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.core.app.NotificationCompat;
-import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-
-import android.telecom.Call;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import com.example.getmypic.Models.DownloadImage;
 import com.example.getmypic.Models.Firebase;
@@ -30,29 +24,17 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.SignInButton;
-import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.GoogleAuthProvider;
-
-import org.w3c.dom.Text;
 
 import java.util.Objects;
-import java.util.concurrent.Executor;
-
-import static com.google.android.gms.auth.api.signin.GoogleSignIn.*;
 
 
 /**
@@ -78,8 +60,6 @@ public class Login extends Fragment {
     private View.OnClickListener googleSignIn;
     private GoogleSignInClient mGoogleSignInClient;
 
-    private ProgressBar loginSpinner;
-
     private CallbackManager mFacebookCallbackManager;
 
     private OnFragmentInteractionListener mListener;
@@ -88,32 +68,6 @@ public class Login extends Fragment {
 
     public Login() {
         // Required empty public constructor
-    }
-
-    private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
-        Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
-
-        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
-        mAuth.signInWithCredential(credential)
-                .addOnCompleteListener((Executor) this, new OnCompleteListener<AuthResult>() {
-
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "signInWithCredential:success");
-
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w(TAG, "signInWithCredential:failure", task.getException());
-                            Snackbar.make(getView().findViewById(R.id.login), "Authentication Failed.", Snackbar.LENGTH_SHORT).show();
-                            //updateUI(null);
-                        }
-
-                        NavController navController = Navigation.findNavController(getActivity(), R.id.get_my_pic_nav_graph);
-                        navController.navigate(R.id.action_login_to_listFeeds);
-                    }
-                });
     }
 
     private void handleFacebookAccessToken(AccessToken token) {
@@ -133,7 +87,9 @@ public class Login extends Fragment {
 
                             firebaseInstance.addCurrUser();
 
-                            UpdateUI(user);
+                            //ShowLoggedInUserScreens(user);
+
+                            ((MainActivity) getActivity()).prepareViewForLoggedInUser(user);
 
                         } else {
                             // If sign in fails, display a message to the user.
@@ -141,59 +97,22 @@ public class Login extends Fragment {
                             Toast.makeText(getActivity(), "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
                         }
-
-                        // ...
                     }
                 });
     }
 
-
-    private void initalizeGoogleSignIn(View loginView){
-        // Configure sign-in to request the user's ID, email address, and basic
-        // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.google_client_id))
-                .requestEmail()
-                .build();
-
-        // Build a GoogleSignInClient with the options specified by gso.
-        mGoogleSignInClient = GoogleSignIn.getClient(this.getActivity(), gso);
-
-        // Set the dimensions of the sign-in button.
-        SignInButton signInButton = (SignInButton) loginView.findViewById(R.id.google_sign_in_button);
-        signInButton.setSize(SignInButton.SIZE_STANDARD);
-
-        loginView.findViewById(R.id.google_sign_in_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                switch (v.getId()) {
-                    case R.id.google_sign_in_button:
-
-                        Intent googleSignInIntent = mGoogleSignInClient.getSignInIntent();
-                        startActivityForResult(googleSignInIntent, RC_GOOGLE_SIGN_IN);
-
-                        break;
-                }
-            }
-        });
-
-    }
-
-    private  void initalizeFacebookSignIn(View loginView){
+    private void initalizeFacebookSignIn(View loginView) {
         mFacebookCallbackManager = CallbackManager.Factory.create();
 
         LoginButton facebookLoginButton = loginView.findViewById(R.id.buttonFacebookLogin);
 
-        facebookLoginButton.setReadPermissions("email", "public_profile");
+        facebookLoginButton.setPermissions("email", "public_profile");
 
         facebookLoginButton.setFragment(this);
 
         facebookLoginButton.registerCallback(mFacebookCallbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-
-                loginSpinner.setVisibility(View.VISIBLE);
-
                 Log.d(TAG, "facebook:onSuccess:" + loginResult);
 
                 handleFacebookAccessToken(loginResult.getAccessToken());
@@ -202,8 +121,6 @@ public class Login extends Fragment {
             @Override
             public void onCancel() {
                 Log.d(TAG, "facebook:onCancel");
-
-                loginSpinner.setVisibility(View.GONE);
             }
 
             @Override
@@ -215,21 +132,22 @@ public class Login extends Fragment {
 
     }
 
-    private void UpdateUI(FirebaseUser user){
+    private void ShowLoggedInUserScreens(FirebaseUser user) {
+        getActivity().findViewById(R.id.toolbar).setVisibility(View.VISIBLE);
+        getActivity().findViewById(R.id.nav_view).setVisibility(View.VISIBLE);
 
         NavigationView navigationView = (NavigationView) getActivity().findViewById(R.id.nav_view);
 
-        ImageView userImage = (ImageView)getActivity().findViewById(R.id.user_profile_pic);
+        ImageView userImage = (ImageView) getActivity().findViewById(R.id.user_profile_pic);
 
         new DownloadImage(userImage).execute(user.getPhotoUrl().toString());
 
-        TextView userText = (TextView)getActivity().findViewById(R.id.display_name);
+        TextView userText = (TextView) getActivity().findViewById(R.id.display_name);
 
         userText.setText("Hello " + user.getDisplayName());
 
         navigationView.getMenu().findItem(R.id.myFeeds).setVisible(true);
         navigationView.getMenu().findItem(R.id.login).setVisible(false);
-        navigationView.getMenu().findItem(R.id.logout2).setVisible(true);
 
         NavController navController = Navigation.findNavController(getActivity(), R.id.get_my_pic_nav_graph);
         navController.navigate(R.id.action_login_to_listFeeds);
@@ -259,16 +177,22 @@ public class Login extends Fragment {
         // Inflate the layout for this fragment
         View loginView = inflater.inflate(R.layout.fragment_login, container, false);
 
-        loginSpinner = (ProgressBar) loginView.findViewById(R.id.login_spinner);
-
-        loginSpinner.setVisibility(View.GONE);
-
-        initalizeGoogleSignIn(loginView);
-
         initalizeFacebookSignIn(loginView);
 
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
+
+        if (true) {
+            mAuth.signInAnonymously().addOnCompleteListener(Objects.requireNonNull(getActivity()), new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    if (task.isSuccessful()) {
+                        FirebaseUser user = mAuth.getCurrentUser();
+                        ((MainActivity) getActivity()).prepareViewForLoggedInUser(user);
+                    }
+                }
+            });
+        }
 
         return loginView;
     }
@@ -289,24 +213,7 @@ public class Login extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
-        if (requestCode == RC_GOOGLE_SIGN_IN) {
-            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-            try {
-                // Google Sign In was successful, authenticate with Firebase
-                GoogleSignInAccount account = task.getResult(ApiException.class);
-                firebaseAuthWithGoogle(account);
-            } catch (ApiException e) {
-                // Google Sign In failed, update UI appropriately
-                Log.w(TAG, "Google sign in failed", e);
-                //Log.w(TAG, "Google sign in failed", e);
-                // ...
-            }
-        }
-        else {
-            mFacebookCallbackManager.onActivityResult(requestCode, resultCode, data);
-        }
+        mFacebookCallbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
     /**

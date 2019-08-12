@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/get_my_pic_nav_graph"
-    app:startDestination="@+id/listFeeds">
+    app:startDestination="@id/listFeeds">
     <fragment
         android:id="@+id/listFeeds"
         android:name="com.example.getmypic.ListFeeds"
@@ -22,9 +22,6 @@
             android:id="@+id/action_myFeeds_to_createFeed"
             app:destination="@id/createFeed" />
         <action
-            android:id="@+id/action_myFeeds_to_updateFeed"
-            app:destination="@id/updateFeed" />
-        <action
             android:id="@+id/action_myFeeds_to_viewFeed"
             app:destination="@id/viewFeed" />
     </fragment>
@@ -32,37 +29,23 @@
         android:id="@+id/viewFeed"
         android:name="com.example.getmypic.ViewFeed"
         android:label="fragment_view_feed"
-        tools:layout="@layout/fragment_view_feed" />
+        tools:layout="@layout/fragment_view_feed" >
+        <action
+            android:id="@+id/action_viewFeed_to_createFeed"
+            app:destination="@id/createFeed" />
+    </fragment>
     <fragment
         android:id="@+id/createFeed"
         android:name="com.example.getmypic.CreateFeed"
         android:label="fragment_create_feed"
-        tools:layout="@layout/fragment_create_feed" >
-        <action
-            android:id="@+id/action_createFeed_to_listFeeds"
-            app:destination="@id/listFeeds" />
-    </fragment>
-    <fragment
-        android:id="@+id/updateFeed"
-        android:name="com.example.getmypic.UpdateFeed"
-        android:label="fragment_update_feed"
-        tools:layout="@layout/fragment_update_feed" />
+        tools:layout="@layout/fragment_create_feed" />
     <fragment
         android:id="@+id/login"
         android:name="com.example.getmypic.Login"
         android:label="fragment_login"
         tools:layout="@layout/fragment_login" >
         <action
-            android:id="@+id/action_login_to_listFeeds"
-            app:destination="@id/listFeeds" />
-    </fragment>
-    <fragment
-        android:id="@+id/logout2"
-        android:name="com.example.getmypic.Logout"
-        android:label="fragment_logout"
-        tools:layout="@layout/fragment_logout" >
-        <action
-            android:id="@+id/action_logout2_to_listFeeds"
-            app:destination="@id/listFeeds" />
+            android:id="@+id/action_login_to_myFeeds"
+            app:destination="@id/myFeeds" />
     </fragment>
 </navigation>

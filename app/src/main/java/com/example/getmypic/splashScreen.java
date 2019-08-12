@@ -4,6 +4,8 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -11,25 +13,19 @@ import androidx.navigation.Navigation;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.example.getmypic.Models.Users;
-import com.facebook.login.LoginManager;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.material.navigation.NavigationView;
-import com.google.firebase.auth.FirebaseAuth;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link Logout.OnFragmentInteractionListener} interface
+ * {@link splashScreen.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link Logout#newInstance} factory method to
+ * Use the {@link splashScreen#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class Logout extends Fragment {
+public class splashScreen extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -41,7 +37,7 @@ public class Logout extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    public Logout() {
+    public splashScreen() {
         // Required empty public constructor
     }
 
@@ -51,11 +47,11 @@ public class Logout extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment Logout.
+     * @return A new instance of fragment splashScreen.
      */
     // TODO: Rename and change types and number of parameters
-    public static Logout newInstance(String param1, String param2) {
-        Logout fragment = new Logout();
+    public static splashScreen newInstance(String param1, String param2) {
+        splashScreen fragment = new splashScreen();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -75,33 +71,20 @@ public class Logout extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-        View logoutView = inflater.inflate(R.layout.fragment_logout, container, false);
-
+        ((MainActivity)getActivity()).prepareViewForGuest();
         // Inflate the layout for this fragment
-        if (Users.isAuthenticated()){
-            FirebaseAuth.getInstance().signOut();
+        return inflater.inflate(R.layout.fragment_splash_screen, container, false);
+    }
 
-            LoginManager.getInstance().logOut();
-
-            NavigationView navigationView = (NavigationView) getActivity().findViewById(R.id.nav_view);
-
-            ImageView userImage = (ImageView)getActivity().findViewById(R.id.user_profile_pic);
-
-            userImage.setImageBitmap(null);
-
-            TextView userText = (TextView)getActivity().findViewById(R.id.display_name);
-
-            userText.setText("");
-
-            navigationView.getMenu().findItem(R.id.myFeeds).setVisible(false);
-            navigationView.getMenu().findItem(R.id.login).setVisible(true);
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (Users.isAuthenticated()) {
+            ((MainActivity) getActivity()).prepareViewForLoggedInUser(Users.getUser());
+        } else {
+            NavController navController = Navigation.findNavController(getActivity(), R.id.get_my_pic_nav_graph);
+            navController.navigate(R.id.action_startScreen_to_login);
         }
-
-        NavController navController = Navigation.findNavController(getActivity(), R.id.get_my_pic_nav_graph);
-        //navController.navigate(R.id.action_logout2_to_listFeeds);
-
-        return logoutView;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -110,6 +93,17 @@ public class Logout extends Fragment {
             mListener.onFragmentInteraction(uri);
         }
     }
+
+    /*@Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }*/
 
     @Override
     public void onDetach() {

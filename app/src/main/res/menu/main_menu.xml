@@ -10,10 +10,6 @@
         android:id="@id/listFeeds"
         android:title="List all feeds" />
     <item
-        android:id="@id/logout2"
-        android:title="Sign out"
-        android:visible="false"/>
-    <item
         android:id="@id/login"
         android:title="Sign in"
         android:visible="true"/>

@@ -17,6 +17,7 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Transaction;
@@ -31,32 +32,31 @@ import java.util.LinkedList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Firebase {
-    FirebaseFirestore db;
+    private static FirebaseFirestore db;
 
-    public Firebase(){
+    static {
         db = FirebaseFirestore.getInstance();
         FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
                 .setPersistenceEnabled(false).build();
         db.setFirestoreSettings(settings);
     }
 
-    public void addCurrUser() {
-        if (Users.isAuthenticated()){
+    public static void addCurrUser() {
+        if (Users.isAuthenticated()) {
             FirebaseUser currUser = Users.getUser();
 
             Users userToDB = new Users(currUser.getEmail(), currUser.getDisplayName(), currUser.getUid(), currUser.getPhotoUrl().toString());
 
-            try{
+            try {
                 db.collection("users").document(currUser.getEmail())
                         .set(userToDB);
-            }
-            catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
 
-    public void addPost(Posts post, final MainModel.AddPostListener listener) {
+    public static void addPost(Posts post, final MainModel.AddPostListener listener) {
         db.collection("posts").document(post.getId())
                 .set(post).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
@@ -70,7 +70,7 @@ public class Firebase {
         void onComplete(Posts post);
     }
 
-    public void getPost(String id, final GetPosts listener) {
+    public static void getPost(String id, final GetPosts listener) {
         db.collection("posts").document(id).get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
@@ -86,7 +86,7 @@ public class Firebase {
                 });
     }
 
-    public void getAllPosts(final MainModel.GetAllPostsListener listener) {
+    public static void getAllPosts(final MainModel.GetAllPostsListener listener) {
         db.collection("posts").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
@@ -97,12 +97,11 @@ public class Firebase {
                 }
                 for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
 
-                    try{
+                    try {
                         Posts post = new Posts(doc.getData());
 
                         posts.add(post);
-                    }
-                    catch (RuntimeException exc){
+                    } catch (RuntimeException exc) {
                         exc.printStackTrace();
                     }
 
@@ -112,7 +111,7 @@ public class Firebase {
         });
     }
 
-    public void saveImage(Bitmap imageBitmap, final MainModel.SaveImageListener listener) {
+    public static void saveImage(Bitmap imageBitmap, final MainModel.SaveImageListener listener) {
         FirebaseStorage storage = FirebaseStorage.getInstance();
         // Create a storage reference from our app
         StorageReference storageRef = storage.getReference();

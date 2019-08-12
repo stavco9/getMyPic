@@ -1,43 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="@drawable/side_nav_bar"
-    android:layout_height="186dp"
-    android:gravity="bottom"
-    android:theme="@style/ThemeOverlay.AppCompat.Dark"
+    android:layout_height="wrap_content"
+    android:background="@drawable/main_background"
+    android:gravity="start|top|end"
+    android:orientation="horizontal"
     android:paddingLeft="16dp"
     android:paddingTop="16dp"
     android:paddingRight="16dp"
-    android:paddingBottom="16dp">
-
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@mipmap/ic_launcher_round" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Get My Pic application"></TextView>
+    android:paddingBottom="16dp"
+    android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
     <ImageView
         android:id="@+id/user_profile_pic"
-        android:layout_width="96dp"
-        android:layout_height="96dp" />
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginEnd="20dp"
+        android:scaleType="fitCenter"
+        tools:srcCompat="@tools:sample/avatars" />
 
     <TextView
         android:id="@+id/display_name"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text=""></TextView>
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textSize="24sp"
+        tools:text="@tools:sample/full_names"></TextView>
 
 </LinearLayout>
