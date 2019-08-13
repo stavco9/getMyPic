@@ -52,20 +52,21 @@ public class PostsListAdapter extends RecyclerView.Adapter<PostsListAdapter.Post
         String imageUrl = mDataset[position].getPostImageUrl();
 
         if (imageUrl.length() > 0){
-            Firebase.getImage(imageUrl, new MainModel.GetImageListener() {
-                @Override
-                public void onComplete(Bitmap image) {
-                    holder.postImage.setImageBitmap(image);
-                    holder.postWriter.setText(mDataset[position].getUserEmail());
-                    holder.postDate.setText(mDataset[position].getUploadedDate());
-                    holder.postDescription.setText(mDataset[position].getText());
-                }
-            });
-        } else {
-            holder.postWriter.setText(mDataset[position].getUserEmail());
-            holder.postDate.setText(mDataset[position].getUploadedDate());
-            holder.postDescription.setText(mDataset[position].getText());
+
+            TakePhoto photo = new TakePhoto();
+
+            String fileName = photo.getLocalImageFileName(imageUrl);
+
+            holder.postImage.setImageBitmap(photo.loadImageFromFile(fileName));
+
         }
+        else{
+            holder.postImage.setImageBitmap(null);
+        }
+
+        holder.postWriter.setText(mDataset[position].getUserEmail());
+        holder.postDate.setText(mDataset[position].getUploadedDate());
+        holder.postDescription.setText(mDataset[position].getText());
     }
 
     @Override

@@ -30,10 +30,12 @@ import com.google.firebase.storage.UploadTask;
 import java.io.ByteArrayOutputStream;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Firebase {
     private static FirebaseFirestore db;
+    private static  int nextId;
 
     static {
         db = FirebaseFirestore.getInstance();
@@ -55,6 +57,26 @@ public class Firebase {
                 e.printStackTrace();
             }
         }
+    }
+
+    private static void setNextId(List<Posts> posts){
+
+        int maxId = 0;
+
+        for(Posts post: posts){
+
+            int currId = Integer.parseInt(post.getId());
+
+            if (currId > maxId){
+                maxId = currId;
+            }
+        }
+
+        nextId = maxId + 1;
+    }
+
+    public static int getNextId(){
+        return nextId;
     }
 
     public static void addPost(Posts post, final MainModel.AddPostListener listener) {
@@ -117,6 +139,9 @@ public class Firebase {
                     }
 
                 }
+
+                setNextId(posts);
+
                 listener.onComplete(posts);
             }
         });

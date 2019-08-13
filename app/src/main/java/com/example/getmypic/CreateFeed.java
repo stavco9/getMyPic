@@ -88,7 +88,7 @@ public class CreateFeed extends Fragment {
     }
 
     // Add final post to firebase after photo is taken !!!
-    private void addFinalPostTofirebase(List<Posts> data){
+    private void addFinalPostTofirebase(){
 
         // set is counted to true. Now, this method will not be called anymore
         isCounted = true;
@@ -98,7 +98,7 @@ public class CreateFeed extends Fragment {
         }
         else {
             // Get the count of posts from Firebase
-            count  = data.size() + 1;
+            count  = Firebase.getNextId();
         }
 
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
@@ -116,7 +116,7 @@ public class CreateFeed extends Fragment {
                 // If the post uploaded successfully to Firebase
                 if (success){
                     // Add post to local DB SQLite cache
-                    PostAsyncDao.addPost(post, new MainModel.AddPostListener() {
+                    PostAsyncDao.addPosts(post, new MainModel.AddPostListener() {
                         @Override
                         public void onComplete(boolean success) {
                             Log.d("SQLite", "Added successfully post to local cache");
@@ -169,7 +169,7 @@ public class CreateFeed extends Fragment {
 
     }
 
-    private void addNewFeed(final List<Posts> data){
+    private void addNewFeed(){
 
         // Adding waiting spinner
         uploadedLayout.setVisibility(View.VISIBLE);
@@ -185,7 +185,7 @@ public class CreateFeed extends Fragment {
                     firebaseImageUrl = url;
 
                     // Add final post to Firebase
-                    addFinalPostTofirebase(data);
+                    addFinalPostTofirebase();
 
                     // Save the photo in local cache
                     TakePhoto photo = new TakePhoto();
@@ -198,7 +198,7 @@ public class CreateFeed extends Fragment {
         else if (createFeedTxt.getText().length() > 0){
 
             // Add final post to Firabase
-            addFinalPostTofirebase(data);
+            addFinalPostTofirebase();
         }
         else{
             // Set error text for 2 seconds
@@ -259,27 +259,7 @@ public class CreateFeed extends Fragment {
                     // Get the root view
                     createFeedView = v.getRootView();
 
-                    if (postToEdit == null){
-                        // Get all updated posts from Firebase
-                        fb.getAllPosts(new MainModel.GetAllPostsListener() {
-
-                            @Override
-                            public void onComplete(List<Posts> data) {
-
-                                // If a new feed hasen't added yey
-                                if (!isCounted){
-                                    addNewFeed(data);
-                                }
-                            }
-                        });
-                    }
-                    else{
-                        List<Posts> data = new LinkedList<Posts>();
-
-                        data.add(postToEdit);
-
-                        addNewFeed(data);
-                    }
+                    addNewFeed();
                 }
                 else{
                     // Set error message of internet connectivity for 2 seconds
@@ -340,7 +320,7 @@ public class CreateFeed extends Fragment {
         uploadedText  = (TextView) createFeedView.findViewById(R.id.create_final);
         uploadedLayout = (FrameLayout) createFeedView.findViewById(R.id.create_waiting);
 
-        postToEdit = null; //CreateFeedArgs .fromBundle(getArguments()).getPost();
+        postToEdit = CreateFeedArgs.fromBundle(getArguments()).getPost();
 
         if (postToEdit != null){
             createFeedTxt.setText(postToEdit.getText());
@@ -392,6 +372,7 @@ public class CreateFeed extends Fragment {
 
                     // Convert string to bitmap
                     imageBitmap = BitmapFactory.decodeFile(imgDecodableString);
+                    imageBitmap = TakePhoto.compressPhoto(imageBitmap, 5);
 
                     // Set the uploaded text to visible
                     isUploadedView.setVisibility(View.VISIBLE);
@@ -410,6 +391,7 @@ public class CreateFeed extends Fragment {
                         Matrix matrix = new Matrix();
                         matrix.postRotate(270);
                         imageBitmap = Bitmap.createBitmap(imageBitmap, 0, 0, imageBitmap.getWidth(), imageBitmap.getHeight(), matrix, true);
+                        imageBitmap = TakePhoto.compressPhoto(imageBitmap, 10);
 
                         // set the uploaded text to visible
                         isUploadedView.setVisibility(View.VISIBLE);

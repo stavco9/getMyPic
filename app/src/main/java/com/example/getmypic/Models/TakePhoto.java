@@ -28,6 +28,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -48,6 +49,16 @@ public class TakePhoto {
                     Manifest.permission.WRITE_EXTERNAL_STORAGE
             }, REQUEST_EXTERNAL_STORAGE);
         }
+    }
+
+    public static Bitmap compressPhoto(Bitmap photo, int scale){
+
+        int width = photo.getWidth();
+        int height = photo.getHeight();
+
+        Bitmap compressesPhoto = Bitmap.createScaledBitmap(photo, width / scale, height / scale, true);
+
+        return compressesPhoto;
     }
 
     private File createImageFile(Activity activity) throws IOException {
