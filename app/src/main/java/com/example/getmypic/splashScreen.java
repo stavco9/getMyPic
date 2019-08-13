@@ -83,7 +83,7 @@ public class splashScreen extends Fragment {
             ((MainActivity) getActivity()).prepareViewForLoggedInUser(Users.getUser());
         } else {
             NavController navController = Navigation.findNavController(getActivity(), R.id.get_my_pic_nav_graph);
-            navController.navigate(R.id.action_startScreen_to_login);
+            //navController.navigate(R.id.action_startScreen_to_login);
         }
     }
 

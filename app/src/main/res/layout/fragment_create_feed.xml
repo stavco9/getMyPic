@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="horizontal"
     tools:context=".CreateFeed">
 
     <EditText
         android:id="@+id/create_feed_txt"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:hint="Tell me what you feel..."
         android:inputType="textCapSentences|textMultiLine"
         android:maxLength="2000"
@@ -18,9 +18,65 @@
     <Button
         android:id="@+id/create_feed_submit_btn"
         android:text="Share"
+        android:layout_below="@id/is_Uploaded"
         android:textColor="#FFFFFF"
         android:textSize="30sp"
         android:layout_width="100dp"
         android:layout_height="100dp" />
 
-</FrameLayout>
+    <Button
+        android:id="@+id/take_photo_gallery"
+        android:layout_below="@id/take_photo_camera"
+        android:gravity="left"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Take photo from gallery"
+        />
+
+    <Button
+        android:id="@+id/take_photo_camera"
+        android:layout_below="@id/create_feed_txt"
+        android:gravity="right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Take photo from camera"
+        />
+
+    <TextView
+        android:id="@+id/is_Uploaded"
+        android:layout_below="@id/take_photo_gallery"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Uploaded"
+        android:visibility="gone"
+        />
+
+    <FrameLayout
+        android:id="@+id/create_waiting"
+        android:animateLayoutChanges="true"
+        android:visibility="gone"
+        android:alpha="0.4"
+        android:background="#FFFFFF"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <ProgressBar
+        style="?android:attr/progressBarStyleLarge"
+        android:id="@+id/create_waiting_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:visibility="gone"
+        android:layout_gravity="center" />
+
+    <TextView
+        android:id="@+id/create_final"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:visibility="gone"
+        android:layout_gravity="center" />
+
+    </FrameLayout>
+
+</RelativeLayout>

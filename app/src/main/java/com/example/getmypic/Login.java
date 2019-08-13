@@ -87,8 +87,6 @@ public class Login extends Fragment {
 
                             firebaseInstance.addCurrUser();
 
-                            //ShowLoggedInUserScreens(user);
-
                             ((MainActivity) getActivity()).prepareViewForLoggedInUser(user);
 
                         } else {
@@ -132,26 +130,6 @@ public class Login extends Fragment {
 
     }
 
-    private void ShowLoggedInUserScreens(FirebaseUser user) {
-        getActivity().findViewById(R.id.toolbar).setVisibility(View.VISIBLE);
-        getActivity().findViewById(R.id.nav_view).setVisibility(View.VISIBLE);
-
-        NavigationView navigationView = (NavigationView) getActivity().findViewById(R.id.nav_view);
-
-        ImageView userImage = (ImageView) getActivity().findViewById(R.id.user_profile_pic);
-
-        new DownloadImage(userImage).execute(user.getPhotoUrl().toString());
-
-        TextView userText = (TextView) getActivity().findViewById(R.id.display_name);
-
-        userText.setText("Hello " + user.getDisplayName());
-
-        navigationView.getMenu().findItem(R.id.myFeeds).setVisible(true);
-        navigationView.getMenu().findItem(R.id.login).setVisible(false);
-
-        NavController navController = Navigation.findNavController(getActivity(), R.id.get_my_pic_nav_graph);
-        navController.navigate(R.id.action_login_to_listFeeds);
-    }
 
     /**
      * Use this factory method to create a new instance of
@@ -177,22 +155,9 @@ public class Login extends Fragment {
         // Inflate the layout for this fragment
         View loginView = inflater.inflate(R.layout.fragment_login, container, false);
 
-        initalizeFacebookSignIn(loginView);
-
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
-
-        if (true) {
-            mAuth.signInAnonymously().addOnCompleteListener(Objects.requireNonNull(getActivity()), new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-                    if (task.isSuccessful()) {
-                        FirebaseUser user = mAuth.getCurrentUser();
-                        ((MainActivity) getActivity()).prepareViewForLoggedInUser(user);
-                    }
-                }
-            });
-        }
+        initalizeFacebookSignIn(loginView);
 
         return loginView;
     }

@@ -26,7 +26,7 @@ public class Users {
     public String facebookId;
     public String imagePath;
 
-    private static final boolean devMode = true;
+    private static final boolean devMode = false;
 
     public Users(String emailAddress, String displayName, String facebookId, String imagePath) {
         this.emailAddress = emailAddress;
@@ -38,7 +38,7 @@ public class Users {
     public static FirebaseUser getUser() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-        if (devMode && user != null) {
+        if (devMode) {
             return devModeUser;
         }
 
@@ -46,7 +46,8 @@ public class Users {
     }
 
     public static boolean isAuthenticated() {
-        return (getUser() != null);
+        FirebaseUser user = getUser();
+        return (user != null && !user.isAnonymous());
     }
 
     private static FirebaseUser devModeUser = new FirebaseUser() {

@@ -1,6 +1,7 @@
 package com.example.getmypic.Models;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.ColorSpace;
 import android.net.Uri;
 
@@ -66,6 +67,16 @@ public class Firebase {
         });
     }
 
+    public void deletePost(Posts post, final MainModel.DeletePostListener listener) {
+        db.collection("posts").document(post.getId())
+                .delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                listener.onComplete(task.isSuccessful());
+            }
+        });
+    }
+
     interface GetPosts {
         void onComplete(Posts post);
     }
@@ -87,7 +98,7 @@ public class Firebase {
     }
 
     public static void getAllPosts(final MainModel.GetAllPostsListener listener) {
-        db.collection("posts").addSnapshotListener(new EventListener<QuerySnapshot>() {
+        db.collection("posts").orderBy("id", Query.Direction.DESCENDING).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
                 LinkedList<Posts> posts = new LinkedList<>();
@@ -107,6 +118,25 @@ public class Firebase {
 
                 }
                 listener.onComplete(posts);
+            }
+        });
+    }
+
+    public static void getImage(String url, final MainModel.GetImageListener listener){
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference httpsReference = storage.getReferenceFromUrl(url);
+        final long ONE_MEGABYTE = 1024 * 1024;
+        httpsReference.getBytes(3* ONE_MEGABYTE).addOnCompleteListener(new OnCompleteListener<byte[]>() {
+            @Override
+            public void onComplete(@NonNull Task<byte[]> task) {
+                if (task.isSuccessful()){
+                    byte[] bytes = task.getResult();
+                    Bitmap image = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
+                    listener.onComplete(image);
+                }
+                else{
+                    listener.onComplete(null);
+                }
             }
         });
     }

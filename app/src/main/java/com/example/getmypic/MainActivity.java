@@ -16,10 +16,26 @@ import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
+
 import com.example.getmypic.Models.DownloadImage;
 import com.example.getmypic.Models.Users;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -28,12 +44,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        /*if (Users.isAuthenticated()) {
-            this.prepareViewForLoggedInUser(Users.getUser());
-        } else {
-            this.prepareViewForGuest();
-        }*/
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -41,63 +51,44 @@ public class MainActivity extends AppCompatActivity {
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
-        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-
-        /*if (Users.isAuthenticated()) {
-
-            ImageView userImage = (ImageView) navigationView.getHeaderView(0).findViewById(R.id.user_profile_pic);
-
-            new DownloadImage(userImage).execute(Users.getUser().getPhotoUrl().toString());
-
-            TextView userText = (TextView) navigationView.getHeaderView(0).findViewById(R.id.display_name);
-
-            userText.setText("Hello " + Users.getUser().getDisplayName());
-
-            navigationView.getMenu().findItem(R.id.myFeeds).setVisible(true);
-            navigationView.getMenu().findItem(R.id.login).setVisible(false);
+        if (Users.isAuthenticated()) {
+            this.prepareViewForLoggedInUser(Users.getUser());
         } else {
-            ImageView userImage = (ImageView) navigationView.getHeaderView(0).findViewById(R.id.user_profile_pic);
-
-            userImage.setImageBitmap(null);
-
-            TextView userText = (TextView) navigationView.getHeaderView(0).findViewById(R.id.display_name);
-
-            userText.setText("");
-
-            navigationView.getMenu().findItem(R.id.myFeeds).setVisible(false);
-            navigationView.getMenu().findItem(R.id.login).setVisible(true);
-        }*/
-
-        NavController navController = Navigation.findNavController(this, R.id.get_my_pic_nav_graph);
-
-        NavigationUI.setupWithNavController(navigationView, navController);
-
-        navController.addOnDestinationChangedListener(new NavController.OnDestinationChangedListener() {
-            @Override
-            public void onDestinationChanged(@NonNull NavController controller, @NonNull NavDestination destination, @Nullable Bundle arguments) {
-                getSupportActionBar().setTitle(destination.getLabel());
+            if (GetMyPicApplication.isInternetAvailable()) {
+                FirebaseAuth.getInstance().signInAnonymously();
             }
-        });
+
+            this.prepareViewForGuest();
+        }
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavController navController = Navigation.findNavController(this, R.id.get_my_pic_nav_graph);
+        NavigationUI.setupWithNavController(navigationView, navController);
+        getSupportActionBar().setTitle("WatchMe!");
     }
 
     public void prepareViewForGuest() {
-        findViewById(R.id.toolbar).setVisibility(View.GONE);
-        ((DrawerLayout) findViewById(R.id.drawer_layout)).setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.getMenu().findItem(R.id.login).setVisible(true);
+        navigationView.getMenu().findItem(R.id.myFeeds).setVisible(false);
+        ((ImageView) navigationView.getHeaderView(0).findViewById(R.id.user_profile_pic)).setImageBitmap(null);
+        ((TextView) navigationView.getHeaderView(0).findViewById(R.id.display_name)).setText("");
+
+        NavController navController = Navigation.findNavController(this, R.id.get_my_pic_nav_graph);
+        navController.popBackStack(R.id.listFeeds, false);
     }
 
     public void prepareViewForLoggedInUser(FirebaseUser user) {
-        findViewById(R.id.toolbar).setVisibility(View.VISIBLE);
-        ((DrawerLayout) findViewById(R.id.drawer_layout)).setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-
         NavigationView navigationView = findViewById(R.id.nav_view);
-        new DownloadImage((ImageView)navigationView.getHeaderView(0).findViewById(R.id.user_profile_pic)).execute(user.getPhotoUrl().toString());
-        ((TextView)navigationView.getHeaderView(0).findViewById(R.id.display_name)).setText(user.getDisplayName());
+        navigationView.getMenu().findItem(R.id.login).setVisible(false);
+        navigationView.getMenu().findItem(R.id.myFeeds).setVisible(true);
+        new DownloadImage((ImageView) navigationView.getHeaderView(0).findViewById(R.id.user_profile_pic)).execute(user.getPhotoUrl().toString());
+        ((TextView) navigationView.getHeaderView(0).findViewById(R.id.display_name)).setText(user.getDisplayName());
 
         NavController navController = Navigation.findNavController(this, R.id.get_my_pic_nav_graph);
-        navController.navigate(R.id.action_startScreen_to_listFeeds);
+        navController.popBackStack(R.id.listFeeds, false);
     }
 
 /*    @Override

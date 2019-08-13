@@ -1,6 +1,7 @@
 package com.example.getmypic.Models;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,11 +47,25 @@ public class PostsListAdapter extends RecyclerView.Adapter<PostsListAdapter.Post
     }
 
     @Override
-    public void onBindViewHolder(PostViewHolder holder, int position) {
-        holder.postWriter.setText(mDataset[position].getUserEmail());
-        holder.postDate.setText(mDataset[position].getUploadedDate());
-        holder.postDescription.setText(mDataset[position].getText());
-        holder.postImage.setImageURI(Uri.parse(mDataset[position].getPostImageUrl()));
+    public void onBindViewHolder(final PostViewHolder holder, final int position) {
+
+        String imageUrl = mDataset[position].getPostImageUrl();
+
+        if (imageUrl.length() > 0){
+            Firebase.getImage(imageUrl, new MainModel.GetImageListener() {
+                @Override
+                public void onComplete(Bitmap image) {
+                    holder.postImage.setImageBitmap(image);
+                    holder.postWriter.setText(mDataset[position].getUserEmail());
+                    holder.postDate.setText(mDataset[position].getUploadedDate());
+                    holder.postDescription.setText(mDataset[position].getText());
+                }
+            });
+        } else {
+            holder.postWriter.setText(mDataset[position].getUserEmail());
+            holder.postDate.setText(mDataset[position].getUploadedDate());
+            holder.postDescription.setText(mDataset[position].getText());
+        }
     }
 
     @Override
