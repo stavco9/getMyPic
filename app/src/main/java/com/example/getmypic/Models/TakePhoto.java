@@ -41,14 +41,16 @@ public class TakePhoto {
     private String cameraFilePath;
 
     private static void grantWriteStoragePermissions(Activity activity){
-        boolean hasPermissions = (ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
-                PackageManager.PERMISSION_GRANTED);
-
-        if (!hasPermissions){
+        if (!hasPemissions(activity)){
             ActivityCompat.requestPermissions(activity, new String[]{
                     Manifest.permission.WRITE_EXTERNAL_STORAGE
             }, REQUEST_EXTERNAL_STORAGE);
         }
+    }
+
+    public static boolean hasPemissions(Activity activity){
+        return (ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
+                PackageManager.PERMISSION_GRANTED);
     }
 
     public static Bitmap compressPhoto(Bitmap photo, int scale){
@@ -56,9 +58,7 @@ public class TakePhoto {
         int width = photo.getWidth();
         int height = photo.getHeight();
 
-        Bitmap compressesPhoto = Bitmap.createScaledBitmap(photo, width / scale, height / scale, true);
-
-        return compressesPhoto;
+        return Bitmap.createScaledBitmap(photo, width / scale, height / scale, true);
     }
 
     private File createImageFile(Activity activity) throws IOException {

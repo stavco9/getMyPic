@@ -241,7 +241,11 @@ public class CreateFeed extends Fragment {
                 // Take camera photo
                 photo = new TakePhoto();
                 Intent cameraIntent = photo.captureFromCamera(getActivity());
-                startActivityForResult(cameraIntent, CAMERA_REQUEST_CODE);
+
+                // If the application has access permissions to camera
+                if (TakePhoto.hasPemissions(getActivity())){
+                    startActivityForResult(cameraIntent, CAMERA_REQUEST_CODE);
+                }
             }
         });
     }

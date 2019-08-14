@@ -24,6 +24,10 @@
         <action
             android:id="@+id/action_myFeeds_to_viewFeed"
             app:destination="@id/viewFeed" />
+        <action
+            android:id="@+id/action_myFeeds_to_removePost"
+            app:destination="@id/removePost"
+            app:popUpTo="@id/myFeeds" />
     </fragment>
     <fragment
         android:id="@+id/viewFeed"
@@ -54,4 +58,18 @@
             android:id="@+id/action_login_to_myFeeds"
             app:destination="@id/myFeeds" />
     </fragment>
+    <dialog
+        android:id="@+id/removePost"
+        android:name="com.example.getmypic.RemovePost"
+        android:label="RemovePost" >
+        <argument
+            android:name="post"
+            app:argType="com.example.getmypic.Models.Posts"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </dialog>
+    <dialog
+        android:id="@+id/removeUser"
+        android:name="com.example.getmypic.RemoveUser"
+        android:label="RemoveUser" />
 </navigation>

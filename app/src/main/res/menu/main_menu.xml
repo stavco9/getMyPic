@@ -14,4 +14,8 @@
         android:id="@id/myFeeds"
         android:title="My profile"
         android:visible="false"/>
+    <item
+        android:id="@id/removeUser"
+        android:title="Remove User"
+        android:visible="false"/>
 </menu>

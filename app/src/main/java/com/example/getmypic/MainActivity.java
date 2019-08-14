@@ -73,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.getMenu().findItem(R.id.login).setVisible(true);
         navigationView.getMenu().findItem(R.id.myFeeds).setVisible(false);
+        navigationView.getMenu().findItem(R.id.removeUser).setVisible(false);
         ((ImageView) navigationView.getHeaderView(0).findViewById(R.id.user_profile_pic)).setImageBitmap(null);
         ((TextView) navigationView.getHeaderView(0).findViewById(R.id.display_name)).setText("");
 
@@ -84,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.getMenu().findItem(R.id.login).setVisible(false);
         navigationView.getMenu().findItem(R.id.myFeeds).setVisible(true);
+        navigationView.getMenu().findItem(R.id.removeUser).setVisible(true);
         new DownloadImage((ImageView) navigationView.getHeaderView(0).findViewById(R.id.user_profile_pic)).execute(user.getPhotoUrl().toString());
         ((TextView) navigationView.getHeaderView(0).findViewById(R.id.display_name)).setText(user.getDisplayName());
 
