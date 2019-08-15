@@ -2,16 +2,20 @@ package com.example.getmypic.Models;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.getmypic.R;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 public class PostsListAdapter extends RecyclerView.Adapter<PostsListAdapter.PostViewHolder> {
     private Posts[] mDataset;
@@ -25,6 +29,7 @@ public class PostsListAdapter extends RecyclerView.Adapter<PostsListAdapter.Post
         public TextView postDate;
         public TextView postDescription;
         public ImageView postImage;
+        public ProgressBar postImageLoading;
 
         public PostViewHolder(View postView) {
             super(postView);
@@ -32,6 +37,7 @@ public class PostsListAdapter extends RecyclerView.Adapter<PostsListAdapter.Post
             postDescription = postView.findViewById(R.id.postDescription);
             postDate = postView.findViewById(R.id.postDate);
             postImage = postView.findViewById(R.id.postImage);
+            postImageLoading = postView.findViewById(R.id.postImageLoading);
         }
     }
 
@@ -48,23 +54,39 @@ public class PostsListAdapter extends RecyclerView.Adapter<PostsListAdapter.Post
 
     @Override
     public void onBindViewHolder(final PostViewHolder holder, final int position) {
+        final Posts post = mDataset[position];
+        holder.postWriter.setText(post.getUserEmail());
+        holder.postDate.setText(post.getUploadedDate());
+        holder.postDescription.setText(post.getText());
+        holder.postImage.setTag(post.getId());
 
-        String imageUrl = mDataset[position].getPostImageUrl();
-
-        if (imageUrl.length() > 0){
-            Firebase.getImage(imageUrl, new MainModel.GetImageListener() {
+        if(post.getPostImageUrl() != null && post.getPostImageUrl() != "") {
+            Picasso.get().setIndicatorsEnabled(true);
+            Target target = new Target(){
                 @Override
-                public void onComplete(Bitmap image) {
-                    holder.postImage.setImageBitmap(image);
-                    holder.postWriter.setText(mDataset[position].getUserEmail());
-                    holder.postDate.setText(mDataset[position].getUploadedDate());
-                    holder.postDescription.setText(mDataset[position].getText());
+                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                    if (holder.postImage.getTag() == post.getId()) {
+                        holder.postImage.setImageBitmap(bitmap);
+                        holder.postImageLoading.setVisibility(View.GONE);
+                    }
                 }
-            });
-        } else {
-            holder.postWriter.setText(mDataset[position].getUserEmail());
-            holder.postDate.setText(mDataset[position].getUploadedDate());
-            holder.postDescription.setText(mDataset[position].getText());
+
+                @Override
+                public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+                    holder.postImageLoading.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onPrepareLoad(Drawable placeHolderDrawable) {
+                    holder.postImageLoading.setVisibility(View.VISIBLE);
+                }
+            };
+            //Picasso.get().load(post.getPostImageUrl())
+                    //.placeholder(R.drawable.avatar)
+              //      .into(target);
+
+        }else{
+            holder.postImageLoading.setVisibility(View.GONE);
         }
     }
 

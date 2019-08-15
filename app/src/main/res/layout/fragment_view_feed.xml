@@ -11,6 +11,14 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <ProgressBar
+            android:id="@+id/postImageLoading"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="30dp"
+            android:visibility="gone" />
+
         <ImageView
             android:id="@+id/postImage"
             android:layout_width="match_parent"
@@ -18,9 +26,7 @@
             android:layout_margin="30dp"
             android:adjustViewBounds="true"
             android:contentDescription="@string/app_name"
-            android:scaleType="fitCenter"
-            android:src="@drawable/main_background"
-            app:srcCompat="@drawable/main_background" />
+            android:scaleType="fitCenter" />
 
         <TextView
             android:id="@+id/postWriter"
@@ -28,7 +34,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="30dp"
             android:layout_marginRight="30dp"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="5dp"
             android:text="UserName"
             android:textColor="@color/colorAccent"
             android:textSize="24sp"
@@ -54,6 +60,21 @@
             android:layout_marginBottom="30dp"
             android:text="Description Description Description Description Description Description Description"
             android:textSize="18sp" />
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?android:attr/listDivider" />
+
+        <ImageButton
+            android:id="@+id/postGotoEdit"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/side_nav_bar"
+            android:src="@android:drawable/ic_menu_edit"
+            android:visibility="gone" />
     </LinearLayout>
 
 </ScrollView>
