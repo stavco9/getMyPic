@@ -1,6 +1,8 @@
 package com.example.getmypic;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -27,6 +29,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.getmypic.Models.DownloadImage;
+import com.example.getmypic.Models.Firebase;
+import com.example.getmypic.Models.MainModel;
+import com.example.getmypic.Models.PostAsyncDao;
+import com.example.getmypic.Models.Posts;
+import com.example.getmypic.Models.TakePhoto;
 import com.example.getmypic.Models.Users;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -35,6 +42,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.List;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {

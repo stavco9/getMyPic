@@ -2,6 +2,7 @@ package com.example.getmypic;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,13 +51,24 @@ public class ListFeeds extends Fragment {
         }
     }
 
+    private boolean isIMatchId(List<Posts> firebaseposts, Posts localPost){
+        for(Posts firebasePost: firebaseposts){
+            if (firebasePost.getId().equals(localPost.getId())){
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     // This function needs to move to mainActivity
-    public void syncPosts(){
+    public void syncPosts(final List<Posts> localPosts){
         Firebase.getAllPosts(new MainModel.GetAllPostsListener() {
             @Override
-            public void onComplete(List<Posts> data) {
+            public void onComplete(List<Posts> firebasePosts) {
 
-                for(final Posts post: data){
+                for(final Posts post: firebasePosts){
+
                     PostAsyncDao.addPosts(post, new MainModel.AddPostListener() {
                         @Override
                         public void onComplete(boolean success) {
@@ -65,10 +77,21 @@ public class ListFeeds extends Fragment {
                     });
                 }
 
+                for(final Posts post: localPosts){
+                    if (!isIMatchId(firebasePosts, post)){
+                        PostAsyncDao.deletePost(post, new MainModel.DeletePostListener() {
+                            @Override
+                            public void onComplete(boolean success) {
+
+                            }
+                        });
+                    }
+                }
+
                 // This part needs to be removed from this function and get into a function that get's the posts from the local DB cache
                 // instaed of Firebase
-                /*recyclerViewAdapter = new PostsListAdapter(getContext(), data.toArray(new Posts[data.size()]));
-                recyclerView.setAdapter(recyclerViewAdapter);*/
+        /*recyclerViewAdapter = new PostsListAdapter(getContext(), data.toArray(new Posts[data.size()]));
+        recyclerView.setAdapter(recyclerViewAdapter);*/
             }
         });
     }
@@ -84,11 +107,12 @@ public class ListFeeds extends Fragment {
         recyclerViewLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(recyclerViewLayoutManager);
 
-        syncPosts();
-
         PostAsyncDao.getAllPosts(new MainModel.GetAllPostsListener() {
             @Override
             public void onComplete(final List<Posts> data) {
+
+                syncPosts(data);
+
                 recyclerViewAdapter = new PostsListAdapter(getContext(), data.toArray(new Posts[data.size()]));
                 ((PostsListAdapter) recyclerViewAdapter).setOnItemClickListener(new PostsListAdapter.OnItemClickListener() {
                     @Override

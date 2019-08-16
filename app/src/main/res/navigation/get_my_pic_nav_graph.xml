@@ -34,6 +34,9 @@
             android:id="@+id/action_myFeeds_to_removePost"
             app:destination="@id/removePost"
             app:popUpTo="@id/myFeeds" />
+        <action
+            android:id="@+id/action_myFeeds_self"
+            app:destination="@id/myFeeds" />
     </fragment>
     <fragment
         android:id="@+id/viewFeed"
@@ -89,4 +92,8 @@
         android:name="com.example.getmypic.Logout"
         android:label="fragment_logout"
         tools:layout="@layout/fragment_logout" />
+    <action
+        android:id="@+id/action_global_logout"
+        app:destination="@+id/logout" />
+    <action android:id="@+id/action_global_listFeeds" app:destination="@id/listFeeds" />
 </navigation>

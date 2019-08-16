@@ -146,7 +146,7 @@ public class Firebase {
     }
 
     public static void getAllPosts(final MainModel.GetAllPostsListener listener) {
-        db.collection("posts").orderBy("id", Query.Direction.DESCENDING).addSnapshotListener(new EventListener<QuerySnapshot>() {
+        db.collection("posts").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
                 LinkedList<Posts> posts = new LinkedList<>();

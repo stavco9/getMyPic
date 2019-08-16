@@ -99,10 +99,26 @@ public class RemovePost extends DialogFragment {
                                         @Override
                                         public void onComplete(boolean success) {
                                             if (success){
-                                                navController.popBackStack();
+                                                if (navController.getCurrentDestination().getId() == R.id.listFeeds){
+                                                    navController.navigate(R.id.action_global_listFeeds);
+                                                }
+                                                else if(navController.getCurrentDestination().getId() == R.id.myFeeds){
+                                                    navController.navigate(R.id.action_myFeeds_self);
+                                                }
+                                                else if (navController.getCurrentDestination().getId() == R.id.viewFeed){
+                                                    navController.navigate(R.id.action_global_listFeeds);
+                                                }
                                             }
                                             else{
-                                                navController.popBackStack();
+                                                if (navController.getCurrentDestination().getId() == R.id.listFeeds){
+                                                    navController.navigate(R.id.action_global_listFeeds);
+                                                }
+                                                else if(navController.getCurrentDestination().getId() == R.id.myFeeds){
+                                                    navController.navigate(R.id.action_myFeeds_self);
+                                                }
+                                                else if (navController.getCurrentDestination().getId() == R.id.viewFeed){
+                                                    navController.navigate(R.id.action_global_listFeeds);
+                                                }
                                             }
                                         }
                                     });

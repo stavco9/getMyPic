@@ -107,7 +107,7 @@ public class RemoveUser extends DialogFragment {
                                             @Override
                                             public void onComplete(boolean success) {
                                                 if (counterRemove == postsSize){
-                                                    navController.popBackStack(R.id.listFeeds, false);
+                                                    navController.navigate(R.id.action_global_logout);
                                                 }
                                             }
                                         });

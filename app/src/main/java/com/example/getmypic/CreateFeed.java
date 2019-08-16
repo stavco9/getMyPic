@@ -141,7 +141,7 @@ public class CreateFeed extends Fragment {
                                         uploadedText.setVisibility(View.GONE);
 
                                         // Navigate back to list feeds
-                                        navController.popBackStack();
+                                        navController.navigate(R.id.action_global_listFeeds);
                                     }
                                 }, 2000);
                             }
