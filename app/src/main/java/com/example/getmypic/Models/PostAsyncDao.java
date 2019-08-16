@@ -53,7 +53,7 @@ public class PostAsyncDao {
 
     }
 
-    public static void addPost(Posts posts, final MainModel.AddPostListener listener){
+    public static void addPosts(Posts posts, final MainModel.AddPostListener listener){
         new AsyncTask<Posts, String, Boolean>(){
 
             @Override

@@ -28,6 +28,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -40,14 +41,24 @@ public class TakePhoto {
     private String cameraFilePath;
 
     private static void grantWriteStoragePermissions(Activity activity){
-        boolean hasPermissions = (ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
-                PackageManager.PERMISSION_GRANTED);
-
-        if (!hasPermissions){
+        if (!hasPemissions(activity)){
             ActivityCompat.requestPermissions(activity, new String[]{
                     Manifest.permission.WRITE_EXTERNAL_STORAGE
             }, REQUEST_EXTERNAL_STORAGE);
         }
+    }
+
+    public static boolean hasPemissions(Activity activity){
+        return (ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
+                PackageManager.PERMISSION_GRANTED);
+    }
+
+    public static Bitmap compressPhoto(Bitmap photo, int scale){
+
+        int width = photo.getWidth();
+        int height = photo.getHeight();
+
+        return Bitmap.createScaledBitmap(photo, width / scale, height / scale, true);
     }
 
     private File createImageFile(Activity activity) throws IOException {

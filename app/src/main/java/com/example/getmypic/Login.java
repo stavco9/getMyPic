@@ -18,6 +18,7 @@ import androidx.navigation.Navigation;
 
 import com.example.getmypic.Models.DownloadImage;
 import com.example.getmypic.Models.Firebase;
+import com.example.getmypic.Models.Users;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -33,6 +34,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.auth.User;
 
 import java.util.Objects;
 
@@ -154,6 +156,16 @@ public class Login extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View loginView = inflater.inflate(R.layout.fragment_login, container, false);
+
+        ((MainActivity)getActivity()).getSupportActionBar().setTitle("WatchMe! - SignIn");
+
+        loginView.findViewById(R.id.devModeLogin).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Users.devMode = true;
+                ((MainActivity) getActivity()).prepareViewForLoggedInUser(Users.getUser());
+            }
+        });
 
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();

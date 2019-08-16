@@ -8,7 +8,7 @@
     android:gravity="start|top|end"
     android:orientation="horizontal"
     android:paddingLeft="16dp"
-    android:paddingTop="16dp"
+    android:paddingTop="36dp"
     android:paddingRight="16dp"
     android:paddingBottom="16dp"
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
@@ -26,6 +26,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text=""
+        android:textColor="@color/colorAccent"
         android:textSize="24sp"
         tools:text="@tools:sample/full_names"></TextView>
 

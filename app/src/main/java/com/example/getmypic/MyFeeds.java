@@ -73,6 +73,8 @@ public class MyFeeds extends Fragment {
         // Inflate the layout for this fragment
         View myFeedsView = inflater.inflate(R.layout.fragment_my_feeds, container, false);
 
+        ((MainActivity)getActivity()).getSupportActionBar().setTitle("WatchMe! - My profile");
+
         createFeedBtn = (Button)myFeedsView.findViewById(R.id.create_feed_btn);
 
         createFeedBtn.setOnClickListener(new View.OnClickListener() {

@@ -30,10 +30,13 @@ import com.google.firebase.storage.UploadTask;
 import java.io.ByteArrayOutputStream;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Firebase {
     private static FirebaseFirestore db;
+    private static  int nextId;
+    private static List<Posts> listPosts;
 
     static {
         db = FirebaseFirestore.getInstance();
@@ -55,6 +58,51 @@ public class Firebase {
                 e.printStackTrace();
             }
         }
+    }
+
+    private static void setNextId(List<Posts> posts){
+
+        int maxId = 0;
+
+        for(Posts post: posts){
+
+            int currId = Integer.parseInt(post.getId());
+
+            if (currId > maxId){
+                maxId = currId;
+            }
+        }
+
+        nextId = maxId + 1;
+    }
+
+    private static void setListPosts(List<Posts> posts){
+        listPosts = posts;
+    }
+
+    public static List<Posts> getListPosts(){
+        return listPosts;
+    }
+
+    public static List<Posts> getUserPosts(){
+        if (Users.isAuthenticated()){
+
+            List<Posts> userPosts = new LinkedList<>();
+
+            for(Posts posts : listPosts){
+                if (posts.getUserEmail().equals(Users.getUser().getEmail())){
+                    userPosts.add(posts);
+                }
+            }
+
+            return userPosts;
+        }
+
+        return null;
+    }
+
+    public static int getNextId(){
+        return nextId;
     }
 
     public static void addPost(Posts post, final MainModel.AddPostListener listener) {
@@ -117,6 +165,10 @@ public class Firebase {
                     }
 
                 }
+
+                setNextId(posts);
+                setListPosts(posts);
+
                 listener.onComplete(posts);
             }
         });

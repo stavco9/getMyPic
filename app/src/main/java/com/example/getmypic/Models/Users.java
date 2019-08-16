@@ -26,7 +26,7 @@ public class Users {
     public String facebookId;
     public String imagePath;
 
-    private static final boolean devMode = false;
+    public static boolean devMode = false;
 
     public Users(String emailAddress, String displayName, String facebookId, String imagePath) {
         this.emailAddress = emailAddress;

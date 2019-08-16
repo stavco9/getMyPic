@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     tools:context=".ViewFeed">
 
     <LinearLayout
@@ -22,11 +22,13 @@
         <ImageView
             android:id="@+id/postImage"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="30dp"
+            android:layout_height="300dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:layout_marginTop="30dp"
             android:adjustViewBounds="true"
             android:contentDescription="@string/app_name"
-            android:scaleType="fitCenter" />
+            android:scaleType="centerCrop" />
 
         <TextView
             android:id="@+id/postWriter"
@@ -35,6 +37,7 @@
             android:layout_marginLeft="30dp"
             android:layout_marginRight="30dp"
             android:layout_marginBottom="5dp"
+            android:layout_marginTop="30dp"
             android:text="UserName"
             android:textColor="@color/colorAccent"
             android:textSize="24sp"
@@ -54,12 +57,35 @@
         <TextView
             android:id="@+id/postDescription"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="24sp"
             android:layout_marginLeft="30dp"
             android:layout_marginRight="30dp"
             android:layout_marginBottom="30dp"
             android:text="Description Description Description Description Description Description Description"
             android:textSize="18sp" />
+
+        <LinearLayout
+            android:id="@+id/postActions"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/postGotoEdit"
+                android:layout_width="250dp"
+                android:layout_height="45dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/lightgrey_background"
+                android:src="@android:drawable/ic_menu_edit" />
+
+            <ImageButton
+                android:id="@+id/postGotoDelete"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/red_background"
+                android:src="@android:drawable/ic_menu_delete" />
+        </LinearLayout>
 
         <View
             android:id="@+id/divider"
@@ -67,14 +93,6 @@
             android:layout_height="1dp"
             android:background="?android:attr/listDivider" />
 
-        <ImageButton
-            android:id="@+id/postGotoEdit"
-            android:layout_width="match_parent"
-            android:layout_height="45dp"
-            android:layout_marginBottom="10dp"
-            android:background="@drawable/side_nav_bar"
-            android:src="@android:drawable/ic_menu_edit"
-            android:visibility="gone" />
     </LinearLayout>
 
 </ScrollView>

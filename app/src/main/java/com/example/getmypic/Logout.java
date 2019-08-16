@@ -19,6 +19,7 @@ import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.auth.User;
 
 
 /**
@@ -78,28 +79,18 @@ public class Logout extends Fragment {
 
         View logoutView = inflater.inflate(R.layout.fragment_logout, container, false);
 
-        // Inflate the layout for this fragment
-        if (Users.isAuthenticated()){
+        if (Users.isAuthenticated() && GetMyPicApplication.isInternetAvailable()) {
+            if (Users.devMode) {
+                Users.devMode = false;
+            }
             FirebaseAuth.getInstance().signOut();
-
             LoginManager.getInstance().logOut();
-
-            NavigationView navigationView = (NavigationView) getActivity().findViewById(R.id.nav_view);
-
-            ImageView userImage = (ImageView)getActivity().findViewById(R.id.user_profile_pic);
-
-            userImage.setImageBitmap(null);
-
-            TextView userText = (TextView)getActivity().findViewById(R.id.display_name);
-
-            userText.setText("");
-
-            navigationView.getMenu().findItem(R.id.myFeeds).setVisible(false);
-            navigationView.getMenu().findItem(R.id.login).setVisible(true);
+            FirebaseAuth.getInstance().signInAnonymously();
+            ((MainActivity) getActivity()).prepareViewForGuest();
+            ((MainActivity) getActivity()).navController.navigate(R.id.login);
+        } else {
+            ((MainActivity) getActivity()).navController.navigate(R.id.listFeeds);
         }
-
-        NavController navController = Navigation.findNavController(getActivity(), R.id.get_my_pic_nav_graph);
-        //navController.navigate(R.id.action_logout2_to_listFeeds);
 
         return logoutView;
     }

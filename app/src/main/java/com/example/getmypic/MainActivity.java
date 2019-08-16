@@ -39,6 +39,8 @@ import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
+    NavController navController;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +55,8 @@ public class MainActivity extends AppCompatActivity {
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
+        navController = Navigation.findNavController(this, R.id.get_my_pic_nav_graph);
+
         if (Users.isAuthenticated()) {
             this.prepareViewForLoggedInUser(Users.getUser());
         } else {
@@ -64,7 +68,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        NavController navController = Navigation.findNavController(this, R.id.get_my_pic_nav_graph);
         NavigationUI.setupWithNavController(navigationView, navController);
         getSupportActionBar().setTitle("WatchMe!");
     }
@@ -73,10 +76,11 @@ public class MainActivity extends AppCompatActivity {
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.getMenu().findItem(R.id.login).setVisible(true);
         navigationView.getMenu().findItem(R.id.myFeeds).setVisible(false);
-        ((ImageView) navigationView.getHeaderView(0).findViewById(R.id.user_profile_pic)).setImageBitmap(null);
+        navigationView.getMenu().findItem(R.id.removeUser).setVisible(false);
+        navigationView.getMenu().findItem(R.id.logout).setVisible(false);
+        ((ImageView) navigationView.getHeaderView(0).findViewById(R.id.user_profile_pic)).setImageResource(R.drawable.launcher_icon);
         ((TextView) navigationView.getHeaderView(0).findViewById(R.id.display_name)).setText("");
 
-        NavController navController = Navigation.findNavController(this, R.id.get_my_pic_nav_graph);
         navController.popBackStack(R.id.listFeeds, false);
     }
 
@@ -84,10 +88,11 @@ public class MainActivity extends AppCompatActivity {
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.getMenu().findItem(R.id.login).setVisible(false);
         navigationView.getMenu().findItem(R.id.myFeeds).setVisible(true);
+        navigationView.getMenu().findItem(R.id.removeUser).setVisible(true);
+        navigationView.getMenu().findItem(R.id.logout).setVisible(true);
         new DownloadImage((ImageView) navigationView.getHeaderView(0).findViewById(R.id.user_profile_pic)).execute(user.getPhotoUrl().toString());
         ((TextView) navigationView.getHeaderView(0).findViewById(R.id.display_name)).setText(user.getDisplayName());
 
-        NavController navController = Navigation.findNavController(this, R.id.get_my_pic_nav_graph);
         navController.popBackStack(R.id.listFeeds, false);
     }
 

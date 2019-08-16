@@ -4,14 +4,26 @@
     tools:showIn="navigation_view">
     <item
         android:id="@id/listFeeds"
+        android:icon="@android:drawable/ic_menu_compass"
         android:title="Home"
-        android:visible="true"/>
+        android:visible="true" />
     <item
         android:id="@id/login"
-        android:title="Sign in"
+        android:title="Sign-in"
         android:visible="true"/>
     <item
         android:id="@id/myFeeds"
+        android:icon="@android:drawable/ic_menu_my_calendar"
         android:title="My profile"
-        android:visible="false"/>
+        android:visible="false" />
+    <item
+        android:id="@id/removeUser"
+        android:icon="@android:drawable/ic_menu_delete"
+        android:title="Delete my user"
+        android:visible="false" />
+    <item
+        android:id="@+id/logout"
+        android:icon="@android:drawable/ic_menu_revert"
+        android:title="Sign-out"
+        android:visible="false" />
 </menu>

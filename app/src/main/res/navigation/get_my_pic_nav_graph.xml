@@ -12,6 +12,12 @@
         <action
             android:id="@+id/action_listFeeds_to_viewFeed"
             app:destination="@id/viewFeed" />
+        <action
+            android:id="@+id/action_listFeeds_to_createFeed"
+            app:destination="@id/createFeed" />
+        <action
+            android:id="@+id/action_listFeeds_to_removePost"
+            app:destination="@id/removePost" />
     </fragment>
     <fragment
         android:id="@+id/myFeeds"
@@ -24,6 +30,10 @@
         <action
             android:id="@+id/action_myFeeds_to_viewFeed"
             app:destination="@id/viewFeed" />
+        <action
+            android:id="@+id/action_myFeeds_to_removePost"
+            app:destination="@id/removePost"
+            app:popUpTo="@id/myFeeds" />
     </fragment>
     <fragment
         android:id="@+id/viewFeed"
@@ -33,17 +43,24 @@
         <action
             android:id="@+id/action_viewFeed_to_createFeed"
             app:destination="@id/createFeed" />
+        <argument
+            android:name="post"
+            app:argType="com.example.getmypic.Models.Posts" />
+        <action
+            android:id="@+id/action_viewFeed_to_removePost"
+            app:destination="@id/removePost" />
     </fragment>
     <fragment
         android:id="@+id/createFeed"
         android:name="com.example.getmypic.CreateFeed"
         android:label="fragment_create_feed"
-        tools:layout="@layout/fragment_create_feed" />
+        tools:layout="@layout/fragment_create_feed" >
         <argument
             android:name="post"
             app:argType="com.example.getmypic.Models.Posts"
             app:nullable="true"
             android:defaultValue="@null" />
+    </fragment>
     <fragment
         android:id="@+id/login"
         android:name="com.example.getmypic.Login"
@@ -53,4 +70,23 @@
             android:id="@+id/action_login_to_myFeeds"
             app:destination="@id/myFeeds" />
     </fragment>
+    <dialog
+        android:id="@+id/removePost"
+        android:name="com.example.getmypic.RemovePost"
+        android:label="RemovePost" >
+        <argument
+            android:name="post"
+            app:argType="com.example.getmypic.Models.Posts"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </dialog>
+    <dialog
+        android:id="@+id/removeUser"
+        android:name="com.example.getmypic.RemoveUser"
+        android:label="RemoveUser" />
+    <fragment
+        android:id="@+id/logout"
+        android:name="com.example.getmypic.Logout"
+        android:label="fragment_logout"
+        tools:layout="@layout/fragment_logout" />
 </navigation>
