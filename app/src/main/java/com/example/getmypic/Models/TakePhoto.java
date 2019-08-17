@@ -41,16 +41,23 @@ public class TakePhoto {
     private String cameraFilePath;
 
     public static void grantWriteStoragePermissions(Activity activity){
-        if (!hasPemissions(activity)){
-            ActivityCompat.requestPermissions(activity, new String[]{
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE
-            }, REQUEST_EXTERNAL_STORAGE);
+        if (activity != null){
+            if (!hasPemissions(activity)){
+                ActivityCompat.requestPermissions(activity, new String[]{
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                }, REQUEST_EXTERNAL_STORAGE);
+            }
         }
     }
 
     public static boolean hasPemissions(Activity activity){
-        return (ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
-                PackageManager.PERMISSION_GRANTED);
+
+        if (activity != null){
+            return (ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
+                    PackageManager.PERMISSION_GRANTED);
+        }
+
+        return false;
     }
 
     public static Bitmap compressPhoto(Bitmap photo, int scale){
