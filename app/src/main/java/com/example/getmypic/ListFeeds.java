@@ -38,15 +38,20 @@ public class ListFeeds extends Fragment {
             final TakePhoto photo = new TakePhoto();
             final String fileName = photo.getLocalImageFileName(url);
 
-            Bitmap checkimage = photo.loadImageFromFile(fileName);
+            if (TakePhoto.hasPemissions(getActivity())){
+                Bitmap checkimage = photo.loadImageFromFile(fileName);
 
-            if (checkimage == null){
-                Firebase.getImage(url, new MainModel.GetImageListener() {
-                    @Override
-                    public void onComplete(Bitmap image) {
-                        photo.saveImageToFile(image, fileName);
-                    }
-                });
+                if (checkimage == null){
+                    Firebase.getImage(url, new MainModel.GetImageListener() {
+                        @Override
+                        public void onComplete(Bitmap image) {
+                            photo.saveImageToFile(image, fileName);
+                        }
+                    });
+                }
+            }
+            else{
+                TakePhoto.grantWriteStoragePermissions(getActivity());
             }
         }
     }

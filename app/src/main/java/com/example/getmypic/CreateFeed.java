@@ -240,11 +240,14 @@ public class CreateFeed extends Fragment {
 
                 // Take camera photo
                 photo = new TakePhoto();
-                Intent cameraIntent = photo.captureFromCamera(getActivity());
 
                 // If the application has access permissions to camera
                 if (TakePhoto.hasPemissions(getActivity())){
+                    Intent cameraIntent = photo.captureFromCamera(getActivity());
                     startActivityForResult(cameraIntent, CAMERA_REQUEST_CODE);
+                }
+                else{
+                    TakePhoto.grantWriteStoragePermissions(getActivity());
                 }
             }
         });
@@ -379,7 +382,15 @@ public class CreateFeed extends Fragment {
 
                     // Convert string to bitmap
                     imageBitmap = BitmapFactory.decodeFile(imgDecodableString);
-                    imageBitmap = TakePhoto.compressPhoto(imageBitmap, 5);
+
+                    if (imageBitmap != null){
+                        imageBitmap = TakePhoto.compressPhoto(imageBitmap, 5);
+
+                        isUploadedView.setText("Uploaded");
+                    }
+                    else{
+                        isUploadedView.setText("Error while uploading");
+                    }
 
                     // Set the uploaded text to visible
                     isUploadedView.setVisibility(View.VISIBLE);
@@ -398,7 +409,15 @@ public class CreateFeed extends Fragment {
                         Matrix matrix = new Matrix();
                         matrix.postRotate(270);
                         imageBitmap = Bitmap.createBitmap(imageBitmap, 0, 0, imageBitmap.getWidth(), imageBitmap.getHeight(), matrix, true);
-                        imageBitmap = TakePhoto.compressPhoto(imageBitmap, 10);
+
+                        if (imageBitmap != null){
+                            imageBitmap = TakePhoto.compressPhoto(imageBitmap, 5);
+
+                            isUploadedView.setText("Uploaded");
+                        }
+                        else{
+                            isUploadedView.setText("Error while uploading");
+                        }
 
                         // set the uploaded text to visible
                         isUploadedView.setVisibility(View.VISIBLE);

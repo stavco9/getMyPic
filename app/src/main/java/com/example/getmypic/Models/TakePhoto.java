@@ -40,7 +40,7 @@ public class TakePhoto {
 
     private String cameraFilePath;
 
-    private static void grantWriteStoragePermissions(Activity activity){
+    public static void grantWriteStoragePermissions(Activity activity){
         if (!hasPemissions(activity)){
             ActivityCompat.requestPermissions(activity, new String[]{
                     Manifest.permission.WRITE_EXTERNAL_STORAGE
@@ -86,6 +86,7 @@ public class TakePhoto {
         try {
             File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
             File imageFile = new File(dir,imageFileName);
+
             InputStream inputStream = new FileInputStream(imageFile);
             bitmap = BitmapFactory.decodeStream(inputStream);
             Log.d("tag","got image from cache: " + imageFileName);

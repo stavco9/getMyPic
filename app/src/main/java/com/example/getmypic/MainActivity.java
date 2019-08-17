@@ -63,6 +63,8 @@ public class MainActivity extends AppCompatActivity {
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
+        TakePhoto.grantWriteStoragePermissions(this);
+
         navController = Navigation.findNavController(this, R.id.get_my_pic_nav_graph);
 
         if (Users.isAuthenticated()) {
