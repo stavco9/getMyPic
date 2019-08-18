@@ -1,7 +1,6 @@
 package com.example.getmypic;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -24,7 +23,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -32,7 +30,6 @@ import com.example.getmypic.Models.Firebase;
 import com.example.getmypic.Models.MainModel;
 import com.example.getmypic.Models.PostAsyncDao;
 import com.example.getmypic.Models.Posts;
-import com.example.getmypic.Models.SQLite;
 import com.example.getmypic.Models.TakePhoto;
 import com.example.getmypic.Models.Users;
 
@@ -40,10 +37,6 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 
 /**
@@ -116,7 +109,7 @@ public class CreateFeed extends Fragment {
                 // If the post uploaded successfully to Firebase
                 if (success){
                     // Add post to local DB SQLite cache
-                    PostAsyncDao.addPosts(post, new MainModel.AddPostListener() {
+                    PostAsyncDao.setPosts(post, new MainModel.AddPostListener() {
                         @Override
                         public void onComplete(boolean success) {
                             Log.d("SQLite", "Added successfully post to local cache");

@@ -21,13 +21,20 @@ import com.example.getmypic.R;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
+import java.util.List;
+
 public class PostsListAdapter extends RecyclerView.Adapter<PostsListAdapter.PostViewHolder> {
-    private Posts[] mDataset;
+    private List<Posts> mDataset;
     private LayoutInflater mInflater;
     private OnItemClickListener mListener;
 
     public interface OnItemClickListener{
         void onClick(int index, String source);
+    }
+
+    public void setData(List<Posts> newData) {
+        this.mDataset = newData;
+        notifyDataSetChanged();
     }
 
     // Provide a reference to the views for each data item
@@ -93,7 +100,7 @@ public class PostsListAdapter extends RecyclerView.Adapter<PostsListAdapter.Post
         }
     }
 
-    public PostsListAdapter(Context context, Posts[] postsList) {
+    public PostsListAdapter(Context context, List<Posts> postsList) {
         this.mInflater = LayoutInflater.from(context);
         this.mDataset = postsList;
     }
@@ -145,25 +152,33 @@ public class PostsListAdapter extends RecyclerView.Adapter<PostsListAdapter.Post
             holder.postImageLoading.setVisibility(View.GONE);
         }*/
 
-        String imageUrl = mDataset[position].getPostImageUrl();
+        String imageUrl = mDataset.get(position).getPostImageUrl();
 
-        if (imageUrl.length() > 0){
+        if (imageUrl != null && imageUrl.length() > 0){
             TakePhoto photo = new TakePhoto();
             String fileName = photo.getLocalImageFileName(imageUrl);
-            holder.postImage.setImageBitmap(photo.loadImageFromFile(fileName));
-            holder.postImage.setVisibility(View.VISIBLE);
+            Bitmap image = photo.loadImageFromFile(fileName);
+            if (image != null) {
+                holder.postImage.setImageBitmap(image);
+                holder.postImage.setVisibility(View.VISIBLE);
+                holder.postImageLoading.setVisibility(View.GONE);
+            } else {
+                holder.postImage.setVisibility(View.GONE);
+                holder.postImageLoading.setVisibility(View.VISIBLE);
+            }
         }
         else{
             holder.postImage.setImageBitmap(null);
             holder.postImage.setVisibility(View.GONE);
+            holder.postImageLoading.setVisibility(View.GONE);
         }
 
-        holder.postWriter.setText(mDataset[position].getUserEmail());
-        holder.postDate.setText(mDataset[position].getUploadedDate());
-        holder.postDescription.setText(mDataset[position].getText());
+        holder.postWriter.setText(mDataset.get(position).getUserEmail());
+        holder.postDate.setText(mDataset.get(position).getUploadedDate().toString());
+        holder.postDescription.setText(mDataset.get(position).getText());
 
         if (Users.isAuthenticated() &&
-                mDataset[position].getUserEmail().equals(Users.getUser().getEmail())) {
+                mDataset.get(position).getUserEmail().equals(Users.getUser().getEmail())) {
             holder.postActions.setVisibility(View.VISIBLE);
         }
         else {
@@ -173,6 +188,9 @@ public class PostsListAdapter extends RecyclerView.Adapter<PostsListAdapter.Post
 
     @Override
     public int getItemCount() {
-        return mDataset.length;
+        if(mDataset != null) {
+            return mDataset.size();
+        }
+        return 0;
     }
 }

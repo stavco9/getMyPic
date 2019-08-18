@@ -34,7 +34,7 @@ interface PostsDao{
     void insertAll(Posts... posts);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insert(List<Posts> posts);
+    void set(List<Posts> posts);
 
     @Delete
     void delete(Posts... post);
@@ -85,14 +85,13 @@ public class PostAsyncDao {
 
     }
 
-    public static void addPosts(Posts posts, final MainModel.AddPostListener listener){
+    public static void setPosts(Posts posts, final MainModel.AddPostListener listener){
         new AsyncTask<Posts, String, Boolean>(){
 
             @Override
             protected Boolean doInBackground(Posts... posts) {
                 try{
                     SQLite.db.postsDao().insertAll(posts);
-
                     return true;
                 }
                 catch (Exception e){
@@ -104,9 +103,7 @@ public class PostAsyncDao {
             protected void onPostExecute(Boolean success) {
                 super.onPostExecute(success);
                 listener.onComplete(success);
-
             }
-
         }.execute(posts);
     }
 

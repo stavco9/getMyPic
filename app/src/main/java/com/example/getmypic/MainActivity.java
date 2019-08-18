@@ -28,6 +28,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.getmypic.Models.DataManager;
 import com.example.getmypic.Models.DownloadImage;
 import com.example.getmypic.Models.Firebase;
 import com.example.getmypic.Models.MainModel;
@@ -78,6 +79,8 @@ public class MainActivity extends AppCompatActivity {
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         NavigationUI.setupWithNavController(navigationView, navController);
         getSupportActionBar().setTitle("WatchMe!");
+
+        DataManager.SyncAllPosts();
     }
 
     public void prepareViewForGuest() {

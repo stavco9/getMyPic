@@ -90,7 +90,7 @@ public class TakePhoto {
             bitmap = BitmapFactory.decodeStream(inputStream);
             Log.d("tag","got image from cache: " + imageFileName);
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
 
         return bitmap;

@@ -54,7 +54,7 @@ public class ViewFeed extends Fragment {
 
         ((TextView) inf.findViewById(R.id.postWriter)).setText(this.post.getUserEmail());
         ((TextView) inf.findViewById(R.id.postDescription)).setText(this.post.getText());
-        ((TextView) inf.findViewById(R.id.postDate)).setText(this.post.getUploadedDate());
+        ((TextView) inf.findViewById(R.id.postDate)).setText(this.post.getUploadedDate().toString());
 
         if (Users.isAuthenticated() &&
                 post.getUserEmail().equals(Users.getUser().getEmail())) {

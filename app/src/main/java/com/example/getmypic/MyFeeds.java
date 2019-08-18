@@ -1,118 +1,186 @@
 package com.example.getmypic;
 
-import android.content.Context;
-import android.net.Uri;
+import android.graphics.Bitmap;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link MyFeeds.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link MyFeeds#newInstance} factory method to
- * create an instance of this fragment.
- */
+import com.example.getmypic.Models.DataManager;
+import com.example.getmypic.Models.Firebase;
+import com.example.getmypic.Models.Listeners;
+import com.example.getmypic.Models.MainModel;
+import com.example.getmypic.Models.PostAsyncDao;
+import com.example.getmypic.Models.Posts;
+import com.example.getmypic.Models.PostsListAdapter;
+import com.example.getmypic.Models.PostsViewModel;
+import com.example.getmypic.Models.TakePhoto;
+import com.example.getmypic.Models.Users;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class MyFeeds extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    private Button createFeedBtn;
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    private OnFragmentInteractionListener mListener;
+    private RecyclerView recyclerView;
+    private RecyclerView.Adapter recyclerViewAdapter;
+    private RecyclerView.LayoutManager recyclerViewLayoutManager;
+    private PostsViewModel postsViewModel;
+    private List<Posts> fragmentPosts;
 
     public MyFeeds() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment MyFeeds.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static MyFeeds newInstance(String param1, String param2) {
-        MyFeeds fragment = new MyFeeds();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        DataManager.listeners.add(new Listeners.DataManagerImageUpdate() {
+            @Override
+            public void onUpdate() {
+                recyclerViewAdapter.notifyDataSetChanged();
+            }
+        });
+        recyclerViewAdapter = new PostsListAdapter(getContext(), fragmentPosts);
+        ((PostsListAdapter) recyclerViewAdapter).setOnItemClickListener(new PostsListAdapter.OnItemClickListener() {
+            @Override
+            public void onClick(int index, String source) {
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("post", fragmentPosts.get(index));
+
+                if (source.equals("postImage")) {
+                    ((MainActivity) getActivity()).navController.navigate(R.id.action_myFeeds_to_viewFeed, bundle);
+                } else if (source.equals("postGotoEdit")) {
+                    ((MainActivity) getActivity()).navController.navigate(R.id.action_myFeeds_to_createFeed, bundle);
+                } else if (source.equals("postGotoDelete")) {
+                    ((MainActivity) getActivity()).navController.navigate(R.id.action_myFeeds_to_removePost, bundle);
+                }
+            }
+        });
+        postsViewModel = ViewModelProviders.of(this).get(PostsViewModel.class);
+        postsViewModel.getAllPosts().observe(this, new Observer<List<Posts>>() {
+            @Override
+            public void onChanged(final List<Posts> data) {
+                fragmentPosts = new ArrayList<>();
+                for (Posts p : data) {
+                    if (p.getUserEmail().equals(Users.getUser().getEmail())) {
+                        fragmentPosts.add(p);
+                    }
+                }
+                ((PostsListAdapter) recyclerViewAdapter).setData(fragmentPosts);
+                recyclerView.setAdapter(recyclerViewAdapter);
+            }
+        });
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+    // This function needs to move to main activity
+    public void syncImages(final String url) {
+
+        if (url.length() > 0) {
+            final TakePhoto photo = new TakePhoto();
+            final String fileName = photo.getLocalImageFileName(url);
+
+            Bitmap checkimage = photo.loadImageFromFile(fileName);
+
+            if (checkimage == null) {
+                Firebase.getImage(url, new MainModel.GetImageListener() {
+                    @Override
+                    public void onComplete(Bitmap image) {
+                        photo.saveImageToFile(image, fileName);
+                    }
+                });
+            }
         }
     }
 
+    private boolean isIMatchId(List<Posts> firebaseposts, Posts localPost) {
+        for (Posts firebasePost : firebaseposts) {
+            if (firebasePost.getId().equals(localPost.getId())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    // This function needs to move to mainActivity
+    public void syncPosts(final List<Posts> localPosts) {
+        Firebase.getAllPosts(new MainModel.GetAllPostsListener() {
+            @Override
+            public void onComplete(List<Posts> firebasePosts) {
+
+                for (final Posts post : firebasePosts) {
+
+                    PostAsyncDao.setPosts(post, new MainModel.AddPostListener() {
+                        @Override
+                        public void onComplete(boolean success) {
+                            syncImages(post.getPostImageUrl());
+                        }
+                    });
+                }
+
+                for (final Posts post : localPosts) {
+                    if (!isIMatchId(firebasePosts, post)) {
+                        PostAsyncDao.deletePost(post, new MainModel.DeletePostListener() {
+                            @Override
+                            public void onComplete(boolean success) {
+
+                            }
+                        });
+                    }
+                }
+
+                // This part needs to be removed from this function and get into a function that get's the posts from the local DB cache
+                // instaed of Firebase
+        /*recyclerViewAdapter = new PostsListAdapter(getContext(), data.toArray(new Posts[data.size()]));
+        recyclerView.setAdapter(recyclerViewAdapter);*/
+            }
+        });
+    }
+
+    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View myFeedsView = inflater.inflate(R.layout.fragment_my_feeds, container, false);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_my_feeds, container, false);
 
-        ((MainActivity)getActivity()).getSupportActionBar().setTitle("WatchMe! - My profile");
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle("WatchMe! - Home");
 
-        createFeedBtn = (Button)myFeedsView.findViewById(R.id.create_feed_btn);
+        recyclerView = view.findViewById(R.id.myfeeds_recyclerview);
+        recyclerViewLayoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(recyclerViewLayoutManager);
+        recyclerView.setAdapter(recyclerViewAdapter);
 
-        createFeedBtn.setOnClickListener(new View.OnClickListener() {
+        if (!GetMyPicApplication.isInternetAvailable()) {
+            PostAsyncDao.getAllPosts(new MainModel.GetAllPostsListener() {
+                @Override
+                public void onComplete(final List<Posts> data) {
+                    fragmentPosts = new ArrayList<>();
+                    for (Posts p : data) {
+                        if (p.getUserEmail().equals(Users.getUser().getEmail())) {
+                            fragmentPosts.add(p);
+                        }
+                    }
+                    ((PostsListAdapter) recyclerViewAdapter).setData(fragmentPosts);
+                    recyclerView.setAdapter(recyclerViewAdapter);
+                }
+            });
+        }
+
+        view.findViewById(R.id.myfeeds_newpostbtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View createFeedView) {
-                NavController navController = Navigation.findNavController(getActivity(), R.id.get_my_pic_nav_graph);
-                navController.navigate(R.id.action_myFeeds_to_createFeed);
+                ((MainActivity)getActivity()).navController.navigate(R.id.action_myFeeds_to_createFeed);
             }
         });
 
-        return  myFeedsView;
-    }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        return view;
     }
 }
