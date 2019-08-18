@@ -17,12 +17,13 @@
 
     <Button
         android:id="@+id/create_feed_submit_btn"
-        android:text="Share"
-        android:layout_below="@id/is_Uploaded"
-        android:textColor="#FFFFFF"
-        android:textSize="30sp"
         android:layout_width="100dp"
-        android:layout_height="100dp" />
+        android:layout_height="100dp"
+        android:layout_below="@id/is_Uploaded"
+        android:layout_marginTop="55dp"
+        android:text="Share"
+        android:textColor="#FFFFFF"
+        android:textSize="30sp" />
 
     <Button
         android:id="@+id/take_photo_gallery"
@@ -44,12 +45,22 @@
 
     <TextView
         android:id="@+id/is_Uploaded"
-        android:layout_below="@id/take_photo_gallery"
-        android:layout_width="fill_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/take_photo_gallery"
+        android:layout_marginTop="8dp"
         android:text="Uploaded"
-        android:visibility="gone"
-        />
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/uploaded_Remove"
+        android:layout_width="58dp"
+        android:layout_height="35dp"
+        android:layout_below="@id/take_photo_gallery"
+        android:layout_marginTop="39dp"
+        android:gravity="center"
+        android:text="X"
+        android:visibility="gone" />
 
     <FrameLayout
         android:id="@+id/create_waiting"

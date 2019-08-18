@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.getmypic.GetMyPicApplication;
 import com.example.getmypic.R;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -94,7 +95,10 @@ public class PostsListAdapter extends RecyclerView.Adapter<PostsListAdapter.Post
     }
 
     public PostsListAdapter(Context context, Posts[] postsList) {
-        this.mInflater = LayoutInflater.from(context);
+        if (context != null){
+            this.mInflater = LayoutInflater.from(context);
+        }
+
         this.mDataset = postsList;
     }
 

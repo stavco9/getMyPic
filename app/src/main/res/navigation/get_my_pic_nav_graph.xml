@@ -42,7 +42,7 @@
         android:id="@+id/viewFeed"
         android:name="com.example.getmypic.ViewFeed"
         android:label="fragment_view_feed"
-        tools:layout="@layout/fragment_view_feed" >
+        tools:layout="@layout/fragment_view_feed">
         <action
             android:id="@+id/action_viewFeed_to_createFeed"
             app:destination="@id/createFeed" />

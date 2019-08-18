@@ -125,12 +125,20 @@ public class ListFeeds extends Fragment {
                         Bundle bundle = new Bundle();
                         bundle.putSerializable("post", data.get(index));
 
+                        Posts post = data.get(index);
+
                         if (source.equals("postImage")) {
-                            ((MainActivity) getActivity()).navController.navigate(R.id.action_listFeeds_to_viewFeed, bundle);
+                            ListFeedsDirections.ActionListFeedsToViewFeed actionListFeedsToViewFeed = ListFeedsDirections.actionListFeedsToViewFeed(post);
+                            ((MainActivity) getActivity()).navController.navigate(actionListFeedsToViewFeed);
                         } else if (source.equals("postGotoEdit")) {
-                            ((MainActivity) getActivity()).navController.navigate(R.id.action_listFeeds_to_createFeed, bundle);
+                            ListFeedsDirections.ActionListFeedsToCreateFeed actionListFeedsToCreateFeed = ListFeedsDirections.actionListFeedsToCreateFeed();
+                            actionListFeedsToCreateFeed.setPost(post);
+                            ((MainActivity) getActivity()).navController.navigate(actionListFeedsToCreateFeed);
+
                         } else if (source.equals("postGotoDelete")) {
-                            ((MainActivity) getActivity()).navController.navigate(R.id.action_listFeeds_to_removePost, bundle);
+                            ListFeedsDirections.ActionListFeedsToRemovePost actionListFeedsToRemovePost = ListFeedsDirections.actionListFeedsToRemovePost();
+                            actionListFeedsToRemovePost.setPost(post);
+                            ((MainActivity) getActivity()).navController.navigate(actionListFeedsToRemovePost);
                         }
                     }
                 });
