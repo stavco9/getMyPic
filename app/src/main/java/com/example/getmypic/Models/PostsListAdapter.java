@@ -61,7 +61,7 @@ public class PostsListAdapter extends RecyclerView.Adapter<PostsListAdapter.Post
             postGotoEdit = postView.findViewById(R.id.postGotoEdit);
             postGotoDelete = postView.findViewById(R.id.postGotoDelete);
 
-            postImage.setOnClickListener(new View.OnClickListener() {
+            View.OnClickListener postImageListener = new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     int index = getAdapterPosition();
@@ -72,7 +72,11 @@ public class PostsListAdapter extends RecyclerView.Adapter<PostsListAdapter.Post
                         }
                     }
                 }
-            });
+            };
+            postImage.setOnClickListener(postImageListener);
+            postDescription.setOnClickListener(postImageListener);
+            postWriter.setOnClickListener(postImageListener);
+            postDate.setOnClickListener(postImageListener);
             postGotoEdit.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -101,7 +105,9 @@ public class PostsListAdapter extends RecyclerView.Adapter<PostsListAdapter.Post
     }
 
     public PostsListAdapter(Context context, List<Posts> postsList) {
-        this.mInflater = LayoutInflater.from(context);
+        if (context != null){
+            this.mInflater = LayoutInflater.from(context);
+        }
         this.mDataset = postsList;
     }
 

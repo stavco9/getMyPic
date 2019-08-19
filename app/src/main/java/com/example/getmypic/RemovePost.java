@@ -2,28 +2,19 @@ package com.example.getmypic;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
-
 import com.example.getmypic.Models.Firebase;
 import com.example.getmypic.Models.MainModel;
-import com.example.getmypic.Models.PostAsyncDao;
 import com.example.getmypic.Models.Posts;
-import com.google.firebase.firestore.model.mutation.ArrayTransformOperation;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -93,14 +84,16 @@ public class RemovePost extends DialogFragment {
                         fb.deletePost(postToRemove, new MainModel.DeletePostListener() {
                             @Override
                             public void onComplete(boolean success) {
-
-                                if (success){
-                                    PostAsyncDao.deletePost(postToRemove, new MainModel.DeletePostListener() {
+                                if (navController.getCurrentDestination().getId() == R.id.removePost){
+                                    navController.popBackStack();
+                                }
+                                /*if (success) {
+                                    /*PostAsyncDao.deletePost(postToRemove, new MainModel.DeletePostListener() {
                                         @Override
                                         public void onComplete(boolean success) {
                                             if (success){
-                                                if (navController.getCurrentDestination().getId() == R.id.listFeeds){
-                                                    navController.navigate(R.id.action_global_listFeeds);
+/*                                                if (navController.getCurrentDestination().getId() == R.id.listFeeds){
+                                                    navController.popBackStack();
                                                 }
                                                 else if(navController.getCurrentDestination().getId() == R.id.myFeeds){
                                                     navController.navigate(R.id.action_myFeeds_self);
@@ -108,6 +101,8 @@ public class RemovePost extends DialogFragment {
                                                 else if (navController.getCurrentDestination().getId() == R.id.viewFeed){
                                                     navController.navigate(R.id.action_global_listFeeds);
                                                 }
+
+                                                navController.popBackStack();
                                             }
                                             else{
                                                 if (navController.getCurrentDestination().getId() == R.id.listFeeds){
@@ -122,17 +117,18 @@ public class RemovePost extends DialogFragment {
                                             }
                                         }
                                     });
-                                }
-                                else{
+                                } else {
                                     navController.popBackStack();
-                                }
+                                }*/
                             }
                         });
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        navController.popBackStack();
+                        if (navController.getCurrentDestination().getId() == R.id.removePost){
+                            navController.popBackStack();
+                        }
                     }
                 });
         // Create the AlertDialog object and return it

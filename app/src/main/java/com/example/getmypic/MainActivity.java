@@ -1,5 +1,6 @@
 package com.example.getmypic;
 
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
@@ -51,8 +52,16 @@ public class MainActivity extends AppCompatActivity {
     NavController navController;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(TakePhoto.hasPemissions(this)) {
+            DataManager.SyncAllPosts(this);
+        } else {
+            TakePhoto.grantWriteStoragePermissions(this);
+        }
+    }
+
+    private void initApp() {
         setContentView(R.layout.activity_main);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -79,8 +88,17 @@ public class MainActivity extends AppCompatActivity {
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         NavigationUI.setupWithNavController(navigationView, navController);
         getSupportActionBar().setTitle("WatchMe!");
+    }
 
-        DataManager.SyncAllPosts();
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        this.initApp();
+        if (TakePhoto.hasPemissions(this)) {
+            DataManager.SyncAllPosts(this);
+        } else {
+            TakePhoto.grantWriteStoragePermissions(this);
+        }
     }
 
     public void prepareViewForGuest() {

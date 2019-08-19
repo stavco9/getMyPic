@@ -38,7 +38,9 @@ public class ViewFeed extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View inf = inflater.inflate(R.layout.fragment_view_feed, container, false);
 
-        String imageUrl = this.post.getPostImageUrl();
+        final Posts post = ViewFeedArgs.fromBundle(getArguments()).getPost();
+
+        String imageUrl = post.getPostImageUrl();
         ImageView postImage = inf.findViewById(R.id.postImage);
 
         if (imageUrl.length() > 0){
@@ -52,9 +54,9 @@ public class ViewFeed extends Fragment {
             postImage.setVisibility(View.GONE);
         }
 
-        ((TextView) inf.findViewById(R.id.postWriter)).setText(this.post.getUserEmail());
-        ((TextView) inf.findViewById(R.id.postDescription)).setText(this.post.getText());
-        ((TextView) inf.findViewById(R.id.postDate)).setText(this.post.getUploadedDate().toString());
+        ((TextView) inf.findViewById(R.id.postWriter)).setText(post.getUserEmail());
+        ((TextView) inf.findViewById(R.id.postDescription)).setText(post.getText());
+        ((TextView) inf.findViewById(R.id.postDate)).setText(post.getUploadedDate());
 
         if (Users.isAuthenticated() &&
                 post.getUserEmail().equals(Users.getUser().getEmail())) {
@@ -67,18 +69,18 @@ public class ViewFeed extends Fragment {
         inf.findViewById(R.id.postGotoEdit).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("post", post);
-                ((MainActivity) getActivity()).navController.navigate(R.id.action_viewFeed_to_createFeed, bundle);
+                ViewFeedDirections.ActionViewFeedToCreateFeed actionViewFeedsToCreateFeed = ViewFeedDirections.actionViewFeedToCreateFeed();
+                actionViewFeedsToCreateFeed.setPost(post);
+                ((MainActivity) getActivity()).navController.navigate(actionViewFeedsToCreateFeed);
             }
         });
 
         inf.findViewById(R.id.postGotoDelete).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("post", post);
-                ((MainActivity) getActivity()).navController.navigate(R.id.action_viewFeed_to_removePost, bundle);
+                ViewFeedDirections.ActionViewFeedToRemovePost actionViewFeedToRemovePost = ViewFeedDirections.actionViewFeedToRemovePost();
+                actionViewFeedToRemovePost.setPost(post);
+                ((MainActivity) getActivity()).navController.navigate(actionViewFeedToRemovePost);
             }
         });
 

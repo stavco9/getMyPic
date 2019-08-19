@@ -15,14 +15,16 @@
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/myfeeds_newpostbtn"
-        android:layout_width="wrap_content"
+        android:layout_width="71dp"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="20dp"
-        android:background="@drawable/lightgrey_background"
+        android:background="#B1FF63"
         android:clickable="true"
         android:src="@android:drawable/ic_input_add"
-        app:backgroundTint="#00ffffff"
-        app:backgroundTintMode="add" />
+        app:backgroundTint="#83FF40"
+        app:backgroundTintMode="add"
+        app:elevation="6dp"
+        app:maxImageSize="48dp" />
 
 </FrameLayout>

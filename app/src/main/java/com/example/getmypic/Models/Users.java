@@ -100,19 +100,19 @@ public class Users {
         @Nullable
         @Override
         public String getDisplayName() {
-            return "Developer";
+            return "Developer of Watchme!";
         }
 
         @Nullable
         @Override
         public Uri getPhotoUrl() {
-            return Uri.parse("https://developer.android.com/images/jetpack/jetpack-hero.svg");
+            return Uri.parse("https://image.jimcdn.com/app/cms/image/transf/none/path/s4b221d70e45e9faf/image/i94424b376560938d/version/1490020628/image.jpg");
         }
 
         @Nullable
         @Override
         public String getEmail() {
-            return "watchme_developer@watchme.gmail.com";
+            return "developer@watchme.com";
         }
 
         @Nullable

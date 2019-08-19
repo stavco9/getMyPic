@@ -62,7 +62,7 @@ public class CreateFeed extends Fragment {
     private Button takePhotoGalleryBtn;
     private Button takePhotoCameraBtn;
     private TextView isUploadedView;
-    private FrameLayout uploadedLayout;
+    private Button remotePhoto;
     private ProgressBar waitingBar;
     private TextView uploadedText;
     private NavController navController;
@@ -115,7 +115,6 @@ public class CreateFeed extends Fragment {
                             Log.d("SQLite", "Added successfully post to local cache");
 
                             // Added result text
-                            uploadedLayout.setVisibility(View.VISIBLE);
                             uploadedText.setVisibility(View.VISIBLE);
                             waitingBar.setVisibility(View.GONE);
                             navController = Navigation.findNavController(getActivity(), R.id.get_my_pic_nav_graph);
@@ -130,11 +129,12 @@ public class CreateFeed extends Fragment {
                                 handler.postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
-                                        uploadedLayout.setVisibility(View.GONE);
                                         uploadedText.setVisibility(View.GONE);
 
                                         // Navigate back to list feeds
-                                        navController.navigate(R.id.action_global_listFeeds);
+                                        if (navController.getCurrentDestination().getId() == R.id.createFeed) {
+                                            navController.popBackStack();
+                                        }
                                     }
                                 }, 2000);
                             }
@@ -149,7 +149,6 @@ public class CreateFeed extends Fragment {
                     handler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            uploadedLayout.setVisibility(View.GONE);
                             uploadedText.setVisibility(View.GONE);
 
                             // Pop back to previous fragment
@@ -165,7 +164,6 @@ public class CreateFeed extends Fragment {
     private void addNewFeed(){
 
         // Adding waiting spinner
-        uploadedLayout.setVisibility(View.VISIBLE);
         waitingBar.setVisibility(View.VISIBLE);
 
         // If a photo was taken
@@ -188,14 +186,13 @@ public class CreateFeed extends Fragment {
             });
         }
         // If no photo was taken but there's a text
-        else if (createFeedTxt.getText().length() > 0){
+        else if (createFeedTxt.getText().length() > 0 || firebaseImageUrl.length() > 0){
 
             // Add final post to Firabase
             addFinalPostTofirebase();
         }
         else{
             // Set error text for 2 seconds
-            uploadedLayout.setVisibility(View.VISIBLE);
             uploadedText.setVisibility(View.VISIBLE);
             waitingBar.setVisibility(View.GONE);
             uploadedText.setText("You must write some text or take a photo");
@@ -204,7 +201,6 @@ public class CreateFeed extends Fragment {
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    uploadedLayout.setVisibility(View.GONE);
                     uploadedText.setVisibility(View.GONE);
                 }
             }, 2000);
@@ -233,12 +229,26 @@ public class CreateFeed extends Fragment {
 
                 // Take camera photo
                 photo = new TakePhoto();
-                Intent cameraIntent = photo.captureFromCamera(getActivity());
 
                 // If the application has access permissions to camera
                 if (TakePhoto.hasPemissions(getActivity())){
+                    Intent cameraIntent = photo.captureFromCamera(getActivity());
                     startActivityForResult(cameraIntent, CAMERA_REQUEST_CODE);
                 }
+                else{
+                    TakePhoto.grantWriteStoragePermissions(getActivity());
+                }
+            }
+        });
+
+        remotePhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isUploadedView.setVisibility(View.GONE);
+                remotePhoto.setVisibility(View.GONE);
+
+                imageBitmap = null;
+                firebaseImageUrl = "";
             }
         });
     }
@@ -260,7 +270,6 @@ public class CreateFeed extends Fragment {
                 }
                 else{
                     // Set error message of internet connectivity for 2 seconds
-                    uploadedLayout.setVisibility(View.VISIBLE);
                     uploadedText.setVisibility(View.VISIBLE);
                     waitingBar.setVisibility(View.GONE);
                     uploadedText.setText("No internet connection.....");
@@ -269,7 +278,6 @@ public class CreateFeed extends Fragment {
                     handler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            uploadedLayout.setVisibility(View.GONE);
                             uploadedText.setVisibility(View.GONE);
                         }
                     }, 2000);
@@ -312,16 +320,22 @@ public class CreateFeed extends Fragment {
         createFeedSubmitBtn = (Button) createFeedView.findViewById(R.id.create_feed_submit_btn);
         takePhotoGalleryBtn = (Button) createFeedView.findViewById(R.id.take_photo_gallery);
         takePhotoCameraBtn = (Button) createFeedView.findViewById(R.id.take_photo_camera);
+        remotePhoto = (Button) createFeedView.findViewById(R.id.uploaded_Remove);
         isUploadedView = (TextView) createFeedView.findViewById(R.id.is_Uploaded);
         waitingBar = (ProgressBar) createFeedView.findViewById(R.id.create_waiting_bar);
         uploadedText  = (TextView) createFeedView.findViewById(R.id.create_final);
-        uploadedLayout = (FrameLayout) createFeedView.findViewById(R.id.create_waiting);
 
         postToEdit = CreateFeedArgs.fromBundle(getArguments()).getPost();
 
         if (postToEdit != null){
             createFeedTxt.setText(postToEdit.getText());
             firebaseImageUrl = postToEdit.getPostImageUrl();
+
+            if (firebaseImageUrl.length() > 0){
+                isUploadedView.setText("Photo");
+                remotePhoto.setVisibility(View.VISIBLE);
+                isUploadedView.setVisibility(View.VISIBLE);
+            }
             ((MainActivity)getActivity()).getSupportActionBar().setTitle("WatchMe! - Edit post");
         } else {
             ((MainActivity)getActivity()).getSupportActionBar().setTitle("WatchMe! - New post");
@@ -372,7 +386,16 @@ public class CreateFeed extends Fragment {
 
                     // Convert string to bitmap
                     imageBitmap = BitmapFactory.decodeFile(imgDecodableString);
-                    imageBitmap = TakePhoto.compressPhoto(imageBitmap, 5);
+
+                    if (imageBitmap != null){
+                        imageBitmap = TakePhoto.compressPhoto(imageBitmap, 5);
+
+                        isUploadedView.setText("Uploaded");
+                        remotePhoto.setVisibility(View.VISIBLE);
+                    }
+                    else{
+                        isUploadedView.setText("Error while uploading");
+                    }
 
                     // Set the uploaded text to visible
                     isUploadedView.setVisibility(View.VISIBLE);
@@ -391,7 +414,16 @@ public class CreateFeed extends Fragment {
                         Matrix matrix = new Matrix();
                         matrix.postRotate(270);
                         imageBitmap = Bitmap.createBitmap(imageBitmap, 0, 0, imageBitmap.getWidth(), imageBitmap.getHeight(), matrix, true);
-                        imageBitmap = TakePhoto.compressPhoto(imageBitmap, 10);
+
+                        if (imageBitmap != null){
+                            imageBitmap = TakePhoto.compressPhoto(imageBitmap, 5);
+
+                            isUploadedView.setText("Uploaded");
+                            remotePhoto.setVisibility(View.VISIBLE);
+                        }
+                        else{
+                            isUploadedView.setText("Error while uploading");
+                        }
 
                         // set the uploaded text to visible
                         isUploadedView.setVisibility(View.VISIBLE);

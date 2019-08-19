@@ -151,7 +151,7 @@ public class MyFeeds extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_my_feeds, container, false);
 
-        ((MainActivity) getActivity()).getSupportActionBar().setTitle("WatchMe! - Home");
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle("WatchMe! - My Profile");
 
         recyclerView = view.findViewById(R.id.myfeeds_recyclerview);
         recyclerViewLayoutManager = new LinearLayoutManager(getContext());

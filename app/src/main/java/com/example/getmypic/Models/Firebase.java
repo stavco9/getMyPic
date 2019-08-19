@@ -38,8 +38,8 @@ import java.util.Map;
 public class Firebase {
     private static FirebaseFirestore db;
     private static FirebaseStorage storage;
-    private static int nextId;
     private static List<Posts> listPosts;
+    public static int nextId;
 
     static {
         db = FirebaseFirestore.getInstance();
@@ -113,6 +113,8 @@ public class Firebase {
                         for (QueryDocumentSnapshot doc : snapshots) {
                             posts.add(new Posts(doc.getData()));
                         }
+
+                        setListPosts(posts);
                         listener.onComplete(posts);
                     }
                 });
@@ -130,17 +132,6 @@ public class Firebase {
 
                         for (DocumentChange dc : snapshots.getDocumentChanges()) {
                             listener.onChange(dc);
-                            /*switch (dc.getType()) {
-                                case ADDED:
-                                    Log.d(TAG, "New city: " + dc.getDocument().getData());
-                                    break;
-                                case MODIFIED:
-                                    Log.d(TAG, "Modified city: " + dc.getDocument().getData());
-                                    break;
-                                case REMOVED:
-                                    Log.d(TAG, "Removed city: " + dc.getDocument().getData());
-                                    break;
-                            }*/
                         }
 
                     }

@@ -40,17 +40,24 @@ public class TakePhoto {
 
     private String cameraFilePath;
 
-    private static void grantWriteStoragePermissions(Activity activity){
-        if (!hasPemissions(activity)){
-            ActivityCompat.requestPermissions(activity, new String[]{
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE
-            }, REQUEST_EXTERNAL_STORAGE);
+    public static void grantWriteStoragePermissions(Activity activity){
+        if (activity != null){
+            if (!hasPemissions(activity)){
+                ActivityCompat.requestPermissions(activity, new String[]{
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                }, REQUEST_EXTERNAL_STORAGE);
+            }
         }
     }
 
     public static boolean hasPemissions(Activity activity){
-        return (ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
-                PackageManager.PERMISSION_GRANTED);
+
+        if (activity != null){
+            return (ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
+                    PackageManager.PERMISSION_GRANTED);
+        }
+
+        return false;
     }
 
     public static Bitmap compressPhoto(Bitmap photo, int scale){
@@ -86,6 +93,7 @@ public class TakePhoto {
         try {
             File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
             File imageFile = new File(dir,imageFileName);
+
             InputStream inputStream = new FileInputStream(imageFile);
             bitmap = BitmapFactory.decodeStream(inputStream);
             Log.d("tag","got image from cache: " + imageFileName);
