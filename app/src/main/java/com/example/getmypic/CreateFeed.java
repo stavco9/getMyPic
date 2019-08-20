@@ -128,7 +128,7 @@ public class CreateFeed extends Fragment {
 
                                 // Set the text that it's successful for 2 seconds
                                 uploadedText.setText("Uploaded successfully");
-                                uploadedText.setTextColor(Color.GREEN);
+                                uploadedText.setTextColor(Color.BLACK);
                                 Handler handler = new Handler();
                                 handler.postDelayed(new Runnable() {
                                     @Override
@@ -257,6 +257,7 @@ public class CreateFeed extends Fragment {
             public void onClick(View v) {
                 imageBitmap = null;
                 firebaseImageUrl = "";
+                imgpreviewCont.setVisibility(View.GONE);
             }
         });
     }
@@ -335,13 +336,19 @@ public class CreateFeed extends Fragment {
         uploadedText  = createFeedView.findViewById(R.id.create_final);
         uploadedCont = createFeedView.findViewById(R.id.create_final_container);
 
+        createFeedSubmitBtn.setVisibility(View.VISIBLE);
+        waitingCont.setVisibility(View.GONE);
+        uploadedCont.setVisibility(View.GONE);
+
         postToEdit = CreateFeedArgs.fromBundle(getArguments()).getPost();
 
         if (postToEdit != null){
             createFeedTxt.setText(postToEdit.getText());
             firebaseImageUrl = postToEdit.getPostImageUrl();
 
-            if (firebaseImageUrl.length() > 0 && imageBitmap != null){
+            if (firebaseImageUrl.length() > 0){
+                TakePhoto photo = new TakePhoto();
+                imageBitmap = photo.loadImageFromFile(photo.getLocalImageFileName(firebaseImageUrl));
                 imgpreviewCont.setVisibility(View.VISIBLE);
                 imgpreview.setImageBitmap(imageBitmap);
             }
