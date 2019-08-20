@@ -98,7 +98,7 @@ public class CreateFeed extends Fragment {
         Date date = new Date();
 
         // Create new post object
-        final Posts post = new Posts(Integer.toString(count), createFeedTxt.getText().toString(), firebaseImageUrl, Users.getUser().getEmail(), dateFormat.format(date));
+        final Posts post = new Posts(Integer.toString(count), createFeedTxt.getText().toString(), firebaseImageUrl, Users.getUser().getEmail(), dateFormat.format(date), Users.getUser().getDisplayName());
 
         // Add post to Firebase
         fb.addPost(post, new MainModel.AddPostListener() {

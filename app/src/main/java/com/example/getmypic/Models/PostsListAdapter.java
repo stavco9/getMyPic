@@ -179,7 +179,7 @@ public class PostsListAdapter extends RecyclerView.Adapter<PostsListAdapter.Post
             holder.postImageLoading.setVisibility(View.GONE);
         }
 
-        holder.postWriter.setText(mDataset.get(position).getUserEmail());
+        holder.postWriter.setText(mDataset.get(position).getDisplayName());
         holder.postDate.setText(mDataset.get(position).getUploadedDate().toString());
         holder.postDescription.setText(mDataset.get(position).getText());
 

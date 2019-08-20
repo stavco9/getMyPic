@@ -54,7 +54,7 @@ public class ViewFeed extends Fragment {
             postImage.setVisibility(View.GONE);
         }
 
-        ((TextView) inf.findViewById(R.id.postWriter)).setText(post.getUserEmail());
+        ((TextView) inf.findViewById(R.id.postWriter)).setText(post.getDisplayName());
         ((TextView) inf.findViewById(R.id.postDescription)).setText(post.getText());
         ((TextView) inf.findViewById(R.id.postDate)).setText(post.getUploadedDate());
 

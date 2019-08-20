@@ -22,15 +22,17 @@ public class Posts implements Serializable {
     private String text;
     private String postImageUrl;
     private String userEmail;
+    private String displayName;
     //private Date uploadedDate;
     private String uploadedDate;
 
-    public Posts(String id, String text, String postImageUrl, String userEmail, String uploadedDate) {
+    public Posts(String id, String text, String postImageUrl, String userEmail, String uploadedDate, String displayName) {
         this.id = id;
         this.text = text;
         this.postImageUrl = postImageUrl;
         this.userEmail = userEmail;
         this.uploadedDate = uploadedDate;
+        this.displayName = displayName;
     }
 
     public Posts(Map<String, Object> post) {
@@ -60,6 +62,12 @@ public class Posts implements Serializable {
             //this.uploadedDate = ((Timestamp) post.get("uploadedDate")).toDate();
             this.uploadedDate = post.get("uploadedDate").toString();
         }
+
+        if (post.containsKey("displayName") &&
+                post.get("displayName") != null) {
+            //this.uploadedDate = ((Timestamp) post.get("uploadedDate")).toDate();
+            this.displayName = post.get("displayName").toString();
+        }
     }
 
     public String getId() {
@@ -78,6 +86,8 @@ public class Posts implements Serializable {
         return this.userEmail;
     }
 
+    public String getDisplayName() { return this.displayName; }
+
     /*public Date getUploadedDate() {
         return this.uploadedDate;
     }*/
@@ -93,6 +103,7 @@ public class Posts implements Serializable {
         map.put("userEmail", this.userEmail);
         //map.put("uploadedDate", new Timestamp(this.uploadedDate));
         map.put("uploadedDate", this.uploadedDate);
+        map.put("displayName", this.displayName);
         return map;
     }
 
