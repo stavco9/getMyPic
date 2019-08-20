@@ -87,10 +87,9 @@ public class Logout extends Fragment {
             LoginManager.getInstance().logOut();
             FirebaseAuth.getInstance().signInAnonymously();
             ((MainActivity) getActivity()).prepareViewForGuest();
-            ((MainActivity) getActivity()).navController.navigate(R.id.action_logout_to_login);
-        } else {
-            ((MainActivity) getActivity()).navController.popBackStack(R.id.listFeeds, false);
         }
+
+        ((MainActivity) getActivity()).navController.popBackStack(R.id.listFeeds, false);
 
         return logoutView;
     }

@@ -13,7 +13,7 @@ import com.example.getmypic.MainActivity;
 
 import java.util.Date;
 
-@Database(entities = {Posts.class}, version = 22)
+@Database(entities = {Posts.class}, version = 23)
 @TypeConverters({Converters.class})
 abstract class AppLocalDbRepository extends RoomDatabase {
     public abstract PostsDao postsDao();

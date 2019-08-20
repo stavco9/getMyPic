@@ -18,7 +18,7 @@ public class DataManager {
                 @Override
                 public void onChange(DocumentChange dc) {
                     Posts p = new Posts(dc.getDocument().getData());
-                    final Posts postChange = new Posts(dc.getDocument().getId(), p.getText(), p.getPostImageUrl(), p.getUserEmail(), p.getUploadedDate());
+                    final Posts postChange = new Posts(dc.getDocument().getId(), p.getText(), p.getPostImageUrl(), p.getUserEmail(), p.getUploadedDate(), p.getDisplayName());
                     switch (dc.getType()) {
                         case ADDED:
                             try {
